@@ -2,6 +2,7 @@ import openai
 import json
 
 from data import events
+from data import wiki
 
 openai.api_key_path = './key'
 
@@ -18,6 +19,6 @@ def respond(prompts):
             {"role": "user", "content": data["membership"]},
             {"role": "user", "content": data["workshop usage"]},
             {"role": "user", "content": events.format_events()}
-        ]+prompts
+        ]+wiki.format_events()+prompts
     )
     return r["choices"][0]["message"]["content"]
