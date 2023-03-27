@@ -1,4 +1,5 @@
 {"channel":"CXXXX",
  "app_token": "xapp-XXXX",
  "bot_token": "xoxb-XXXX",
- "calendar_id": "XXXX@group.calendar.google.com"}
+ "calendar_id": "XXXX@group.calendar.google.com",
+ "wiki_urls":["https://wiki.artifactory.org.au/en/XXX"]}

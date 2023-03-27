@@ -27,6 +27,7 @@ Create a Slack application with:
    * `app_token` - Your slack app token 
    * `bot_token` - Your slack bot token
    * `calendar_id` - The ID for the google calendar you want the bot to know about
+   * `wiki_urls` - Any wiki pages you want the bot to know about.
 * Run `auth_google.py` to authenticate with google for upcoming events
 ## Running
 
