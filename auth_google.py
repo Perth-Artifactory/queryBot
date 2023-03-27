@@ -27,9 +27,8 @@ def main():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'google.secret.json', SCOPES)
+                'google.secret.json', ['https://www.googleapis.com/auth/calendar.readonly'])
             creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
 
@@ -38,9 +37,9 @@ def main():
 
         # Call the Calendar API
         now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-        print('Getting the upcoming 10 events')
-        events_result = service.events().list(calendarId='q9bs8ul7umfnm4m02eq535114o@group.calendar.google.com', timeMin=now,
-                                              maxResults=10, singleEvents=True,
+        print('Getting the next event as a test')
+        events_result = service.events().list(calendarId=config["calendar_id"], timeMin=now,
+                                              maxResults=1, singleEvents=True,
                                               orderBy='startTime').execute()
         events = events_result.get('items', [])
 
@@ -48,7 +47,7 @@ def main():
             print('No upcoming events found.')
             return
 
-        # Prints the start and name of the next 10 events
+        # Print the next event
         for event in events:
             start = event['start'].get('dateTime', event['start'].get('date'))
             print(start, event['summary'])
