@@ -52,7 +52,7 @@ def tagged(body, say):
         gpt_response = gpt.respond(prompts=struct)
         app.client.chat_update(channel=config["channel"], ts=stalling_id, as_user = True, text = gpt_response)
     else:
-        say(f'I am not authorised to communicate here. Head to <{config["channel"]}>')
+        say(f'I am not authorised to communicate here. Head to <#{config["channel"]}>')
 
 if __name__ == "__main__":
     handler = SocketModeHandler(app, config["app_token"])
