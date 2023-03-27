@@ -1,6 +1,8 @@
 import openai
 import json
 
+from data import events
+
 openai.api_key_path = './key'
 
 with open("data.json","r") as f:
@@ -14,7 +16,8 @@ def respond(prompts):
             {"role": "user", "content": data["bot primer"]},
             {"role": "user", "content": data["first visit"]},
             {"role": "user", "content": data["membership"]},
-            {"role": "user", "content": data["workshop usage"]}
+            {"role": "user", "content": data["workshop usage"]},
+            {"role": "user", "content": events.format_events()}
         ]+prompts
     )
     return r["choices"][0]["message"]["content"]
