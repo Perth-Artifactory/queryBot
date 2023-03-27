@@ -36,7 +36,7 @@ def tagged(body, say):
         message = body["event"]["text"].replace(f'<@{id}>',"QueryBot")
 
         # send a stalling message to let users know we've received the request
-        r = say("One moment, gears are turning.",thread_ts=ts)
+        r = say(":spinthinking:",thread_ts=ts)
         stalling_id = r.data["message"]["ts"]
 
         # Retrieve extra context for messages if present
