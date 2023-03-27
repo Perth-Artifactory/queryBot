@@ -1,7 +1,6 @@
 from datetime import datetime
 import os.path
 import json
-from pprint import pprint
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -14,8 +13,10 @@ def pull_events():
     creds = None
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/calendar.readonly'])
-    if not creds or not creds.valid:
+    if not creds:
         print("You need to run auth_google.py")
+    elif not creds.valid:
+        print("creds invalid")
     try:
         service = build('calendar', 'v3', credentials=creds)
 
