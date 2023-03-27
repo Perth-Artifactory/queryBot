@@ -9,6 +9,9 @@ openai.api_key_path = './key'
 with open("data.json","r") as f:
     data = json.load(f)
 
+# prefetch wiki pages
+wiki_pages = wiki.format_pages()
+
 def respond(prompts):
     r = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
@@ -19,6 +22,6 @@ def respond(prompts):
             {"role": "user", "content": data["membership"]},
             {"role": "user", "content": data["workshop usage"]},
             {"role": "user", "content": events.format_events()}
-        ]+wiki.format_events()+prompts
+        ]+wiki_pages+prompts
     )
     return r["choices"][0]["message"]["content"]
