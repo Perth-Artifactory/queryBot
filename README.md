@@ -23,9 +23,9 @@ Create a Slack application with:
 
 * `./key` - your OpenAI token
 * `config.json.example` -> `config.json`
-** `channel` - ID of your Slack channel, remember that access to this channel includes an ability to cost you money. 
-** `app_token` - Your slack app token 
-** `bot_token` - Your slack bot token
+  * `channel` - ID of your Slack channel, remember that access to this channel includes an ability to cost you money. 
+   * `app_token` - Your slack app token 
+   * `bot_token` - Your slack bot token
 
 ## Running
 
