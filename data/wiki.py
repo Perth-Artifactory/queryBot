@@ -20,7 +20,7 @@ def get_pages():
         pages.append({"url":url,
                     "title":re.findall("<title[^>]*>(.*)<\/title>", p.text)[0].split(" |")[0],
                     "content":page})
-        return pages
+    return pages
     
 def format_pages():
     pages = get_pages()
