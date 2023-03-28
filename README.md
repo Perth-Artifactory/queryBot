@@ -16,8 +16,8 @@ Create an account and generate an API token.
 
 Create a Slack application with:
 
-* Socket mode enabled and an event subscription to `app_mention`
-* The following OAuth permissions: `app_mentions:read`, `channels:history`, `chat:write`, `groups:history`
+* Socket mode enabled and an event subscription to `app_mention` and `reactions:read`
+* The following OAuth permissions: `app_mentions:read`, `channels:history`, `channels:read`, `chat:write`, `groups:history`
 
 ## Configuration
 
