@@ -8,11 +8,11 @@ import gpt
 with open("config.json","r") as f:
     config = json.load(f)
 
-def structure_reply(bot_id,messages):
+def structure_reply(bot_id,messages,ignore_mention=False):
     conversation = []
     for message in messages:
         # deslackify
-        mentioned = False
+        mentioned = ignore_mention
         if bot_id in message["text"]:
             mentioned = True
         message["text"] = message["text"].replace(f'<@{bot_id}>',"QueryBot")
@@ -24,6 +24,10 @@ def structure_reply(bot_id,messages):
         elif mentioned == True:
             conversation.append({"role": "user", "content": message["text"]})
     return conversation
+
+def check_perm(id):
+    control_channel_members = app.client.conversations_members(channel=config["channel"]).data["members"]
+    return id in control_channel_members
 
 app = App(token=config["bot_token"])
 
@@ -53,6 +57,25 @@ def tagged(body, say):
         app.client.chat_update(channel=config["channel"], ts=stalling_id, as_user = True, text = gpt_response)
     else:
         say(f'I am not authorised to communicate here. Head to <#{config["channel"]}>')
+
+@app.event("reaction_added")
+def hmm(event, say, body):
+    message_ts = event["item"]["ts"]
+    id = body["authorizations"][0]["user_id"]
+    if event["reaction"] == "chat-gpt" and check_perm(id=event["user"]):
+        r = say(":spinthinking:",thread_ts=message_ts)
+        stalling_id = r.data["message"]["ts"]
+        result = app.client.conversations_replies(
+            channel=event["item"]["channel"],
+            inclusive=True,
+            ts=message_ts)
+        struct = structure_reply(bot_id=id,messages=result.data["messages"],ignore_mention=True)
+        struct[-1]["content"] += " !calendar !slack"
+        gpt_response = gpt.respond(prompts=struct)
+        caveat = "\n(This response was automatically generated)"
+        app.client.chat_update(channel=event["item"]["channel"], ts=stalling_id, as_user = True, text = gpt_response+caveat)
+
+    pprint(event)
 
 if __name__ == "__main__":
     handler = SocketModeHandler(app, config["app_token"])
