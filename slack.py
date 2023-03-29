@@ -75,7 +75,9 @@ def hmm(event, say, body):
         caveat = "\n(This response was automatically generated)"
         app.client.chat_update(channel=event["item"]["channel"], ts=stalling_id, as_user = True, text = gpt_response+caveat)
 
-    pprint(event)
+@app.event("message")
+def handle_message_events(body, logger):
+    logger.info(body)
 
 if __name__ == "__main__":
     handler = SocketModeHandler(app, config["app_token"])
