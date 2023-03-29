@@ -35,6 +35,8 @@ Create a Slack application with:
 
 ## Usage
 
+Please only use the bot for Artifactory tasks, while it is relatively cheap to run it's not free.
+
 * The bot will very confidently be completely wrong if it doesn't know the answer to a question. Make sure you fact check any replies before using them elsewhere. It will go so far as to create fictious URLs etc.
 * It has a a pretty good understanding of upcoming events and pages on our main website. It can access specific pages on the wiki as well but it doesn't always do so well with markdown tables.
 * If something is wrong about the message, like the tone etc, ask the bot to change it.
@@ -52,4 +54,4 @@ Add the following to a message and the bot should get some info about that categ
 
 ### Elsewhere on Slack
 
-If @queryBot is in the channel (`/invite @querybot`) you can react to a users message with :chat-gpt: and the bot will respond to their message. You won't be able to do follow up messages etc. However, if the message you're reacting to has one of the !commands used in the unrestricted channel then these will be executed. Please be mindful of this (especially when using !url)
+If @queryBot is in the channel (`/invite @querybot`) you can react to a users message with `:chat-gpt:` and the bot will respond to their message. You won't be able to do follow up messages etc. However, if the message you're reacting to has one of the !commands used in the unrestricted channel then these will be executed. Please be mindful of this (especially when using `!url`)
