@@ -1,6 +1,7 @@
 import openai
 import json
 from pprint import pprint
+import re
 
 from data import events
 
@@ -25,6 +26,7 @@ optional["slack"] = workspace.format_channels
 def respond(prompts):
     # Add command time optionals
     optional["calendar"] = events.format_events
+    optional["url"] = matryoshka.single_page
 
     # Insert optionals
     extras = []
@@ -32,7 +34,13 @@ def respond(prompts):
     used = []
     for p in prompts:
         for option in optional:
-            if "!"+option in p["content"]:
+            command_search = re.findall(f'!{option}-([^\s]+)', p["content"])
+            if command_search:
+                p["content"] = re.sub(f'!{option}-[^\s]+', "", p["content"])
+                pprint(command_search)
+                extras.append(optional[option](command_search[0]))
+                #extras.append({"role": "user", "content": optional[option](command_search[0])})
+            elif "!"+option in p["content"]:
                 p["content"] = p["content"].replace("!"+option, "")
                 if option not in used:
                     extras.append({"role": "user", "content": optional[option]()})
@@ -49,8 +57,10 @@ def respond(prompts):
             model="gpt-3.5-turbo",
             messages=messages)
 
-    except openai.error.InvalidRequestError:
+    except openai.error.InvalidRequestError as e:
+        print(e)
+        #print(f'EXCEEDED {r["usage"]["prompt_tokens"]}, {r["usage"]["completion_tokens"]}, {r["usage"]["total_tokens"]}/4096')
         return "This conversation has exceeded the number of things I can process at once. If this is a thread try deleting some of the previous comments first."
-    #pprint(messages)
+    pprint(messages)
     print(f'{r["usage"]["prompt_tokens"]}, {r["usage"]["completion_tokens"]}, {r["usage"]["total_tokens"]}/4096')
     return r["choices"][0]["message"]["content"]

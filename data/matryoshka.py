@@ -26,11 +26,16 @@ def process_page(url):
             for f in block["functions"]:
                 i = f(i)
             return i
+    i = {"url":url,"download_url":url}
+    return download_page(i)
 
-def process_pages():
-    with open("config.json","r") as f:
-        config = json.load(f)
-    urls = config["urls"] 
+def process_pages(url=None):
+    if url:
+        urls = [url]
+    else:
+        with open("config.json","r") as f:
+            config = json.load(f)
+        urls = config["urls"]
 
     out = {}
 
@@ -61,6 +66,14 @@ def format_pages(pages):
         pagedata = pages[k]
         prompts.append({"role": "user", "content": f'There is a webpage titled {pagedata["title"]} at {pagedata["url"]} This is a summary of the page written by a version of GPT:\n{pagedata["summary"]}'})
     return prompts
+
+def single_page(url):
+    if url[0] == "<" and url[-1] == ">":
+        url = url[1:-1]
+    pages = process_pages(url=url)
+    for page in pages:
+        p = pages[page]
+    return {"role": "user", "content": f'There is a webpage titled {p["title"]} at {p["url"]} It contains:\n{p["content"]}'}
 
 url_conversions = [{"search":"wiki.artifactory.org.au/en/",
                    "find":"wiki.artifactory.org.au/en/",
