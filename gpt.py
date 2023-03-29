@@ -63,8 +63,6 @@ def respond(prompts):
 
     except openai.error.InvalidRequestError as e:
         print(e)
-        #print(f'EXCEEDED {r["usage"]["prompt_tokens"]}, {r["usage"]["completion_tokens"]}, {r["usage"]["total_tokens"]}/4096')
-        return "This conversation has exceeded the number of things I can process at once. If this is a thread try deleting some of the previous comments first."
-    pprint(messages)
+        return "Something has gone wrong (It's likely that this conversation has exceeded the number of things I can process at once.) If this is a thread try deleting some of the previous comments first."
     print(f'{r["usage"]["prompt_tokens"]}, {r["usage"]["completion_tokens"]}, {r["usage"]["total_tokens"]}/4096')
     return r["choices"][0]["message"]["content"]
