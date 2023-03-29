@@ -32,6 +32,7 @@ def respond(prompts):
     extras = []
     r_prompts = []
     used = []
+    current_pages = pages
     for p in prompts:
         for option in optional:
             command_search = re.findall(f'!{option}-([^\s]+)', p["content"])
@@ -45,12 +46,15 @@ def respond(prompts):
                 if option not in used:
                     extras.append({"role": "user", "content": optional[option]()})
                     used.append(option)
+        if '!nopages' in p["content"]:
+            p["content"] = p["content"].replace("!nopages", "")
+            current_pages = []
         r_prompts.append(p)
 
     messages=[{"role": "system", "content": "You are a helpful assistant tasked with drafting replies to questions from the public on behalf of the Perth Artifactory. You are receiving requests from a channel on the artifactory slack team and your name is QueryBot. If you are ever unsure of information, ask for clarification."},
               {"role": "user", "content": data["bot primer"]},
               {"role": "user", "content": data["workshop usage"]}]
-    messages = messages + pages + extras + r_prompts
+    messages = messages + current_pages + extras + r_prompts
 
     try:
         r = openai.ChatCompletion.create(
