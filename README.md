@@ -45,9 +45,10 @@ Create a Slack application with:
 Send a message to this channel that tags @queryBot to begin a conversation. Your message should include your complete initial request. If you need to send follow up messages in the same conversation, like correcting details, then reply in a thread and tag @queryBot in the message. Any messages in the thread that do not tag @queryBot will be ignored. This allows us to discuss a response without @queryBot getting confused.
 
 Add the following to a message and the bot should get some info about that category to help inform its answer.
-`!calendar` - The next 20 events
-`!slack` - Some basic information about public slack channels with over 30 people
-`!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our website and wiki which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc)
+
+* `!calendar` - The next 20 events
+* `!slack` - Some basic information about public slack channels with over 30 people
+* `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our website and wiki which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc)
 
 ### Elsewhere on Slack
 
