@@ -1,4 +1,9 @@
-from data import matryoshka
+from data import tidyhq
 from pprint import pprint
 
-pprint(matryoshka.single_page("https://wiki.artifactory.org.au/en/minutes/Committee/2023-04-01"))
+
+tidy_data = tidyhq.format_tidyhq()
+def tidy():
+    return tidy_data
+
+print(tidy())

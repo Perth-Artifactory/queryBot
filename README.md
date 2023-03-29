@@ -28,6 +28,7 @@ Create a Slack application with:
    * `bot_token` - Your slack bot token
    * `reddit_id` - Create a [reddit personal use script](https://www.reddit.com/prefs/apps)
    * `reddit_secret` - As above
+   * `tidyhq_token` - TidyHQ API token
    * `calendar_id` - The ID for the google calendar you want the bot to know about
    * `urls` - Any web pages you want the bot to know about. Supports pages on `artifactory.org.au` and `wiki.artifactory.org.au`
 * Run `auth_google.py` to authenticate with google for upcoming events

@@ -1,7 +1,8 @@
 {"channel":"CXXXX",
  "app_token": "xapp-XXXX",
  "bot_token": "xoxb-XXXX",
- "reddit_id":"",
- "reddit_secret": "",
+ "reddit_id":"XXX",
+ "reddit_secret": "XXX",
+ "tidyhq_token": "XXX",
  "calendar_id": "XXXX@group.calendar.google.com",
- "urls":["XXX"]}
+ "urls":["https://XXX.YY","https://XXX.YY/abc]}

@@ -23,6 +23,12 @@ with open("babushka.json","r") as f:
 from data import workspace
 optional["slack"] = workspace.format_channels
 
+from data import tidyhq
+tidy_data = tidyhq.format_tidyhq()
+def tidy():
+    return tidy_data
+optional["tidyhq"] = tidy
+
 def respond(prompts):
     # Add command time optionals
     optional["calendar"] = events.format_events
@@ -41,9 +47,13 @@ def respond(prompts):
                 extras.append(optional[option](command_search[0]))
                 #extras.append({"role": "user", "content": optional[option](command_search[0])})
             elif "!"+option in p["content"]:
+                print("Adding", option)
                 p["content"] = p["content"].replace("!"+option, "")
                 if option not in used:
-                    extras.append({"role": "user", "content": optional[option]()})
+                    content = optional[option]()
+                    print("Content")
+                    print(content)
+                    extras.append({"role": "user", "content": content})
                     used.append(option)
         if '!nopages' in p["content"]:
             p["content"] = p["content"].replace("!nopages", "")
