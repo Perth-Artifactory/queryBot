@@ -52,7 +52,7 @@ Add the following to a message and the bot should get some info about that categ
 
 * `!calendar` - The next 20 events
 * `!slack` - Some basic information about public slack channels with over 30 people
-* `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our website and wiki which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc)
+* `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our website/wiki and Reddit which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc)
 
 ### Elsewhere on Slack
 
