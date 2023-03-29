@@ -1,5 +1,7 @@
 {"channel":"CXXXX",
  "app_token": "xapp-XXXX",
  "bot_token": "xoxb-XXXX",
+ "reddit_id":"",
+ "reddit_secret": "",
  "calendar_id": "XXXX@group.calendar.google.com",
  "urls":["XXX"]}

@@ -38,7 +38,6 @@ def respond(prompts):
             command_search = re.findall(f'!{option}-([^\s]+)', p["content"])
             if command_search:
                 p["content"] = re.sub(f'!{option}-[^\s]+', "", p["content"])
-                pprint(command_search)
                 extras.append(optional[option](command_search[0]))
                 #extras.append({"role": "user", "content": optional[option](command_search[0])})
             elif "!"+option in p["content"]:
@@ -55,6 +54,8 @@ def respond(prompts):
               {"role": "user", "content": data["bot primer"]},
               {"role": "user", "content": data["workshop usage"]}]
     messages = messages + current_pages + extras + r_prompts
+
+    pprint(messages)
 
     try:
         r = openai.ChatCompletion.create(

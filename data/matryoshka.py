@@ -6,6 +6,8 @@ from pprint import pprint
 import hashlib
 import openai
 
+from data import reddit
+
 def download_page(pagedata):
     p = requests.get(pagedata["download_url"])
     pagedata["content"] = html.unescape(p.text)
@@ -19,6 +21,8 @@ def mrkdwn(pagedata):
     return pagedata
 
 def process_page(url):
+    if url[0] == "<" and url[-1] == ">":
+        url = url[1:-1]
     for block in url_conversions:
         if block["search"] in url:
             i = {"url":url,"download_url":url.replace(block["find"],block["replace"])+block["suffix"]}
@@ -73,6 +77,8 @@ def single_page(url):
     pages = process_pages(url=url)
     for page in pages:
         p = pages[page]
+    if type(p) == str:
+        return {"role": "user", "content": p}
     return {"role": "user", "content": f'There is a webpage titled {p["title"]} at {p["url"]} It contains:\n{p["content"]}'}
 
 url_conversions = [{"search":"wiki.artifactory.org.au/en/",
@@ -85,6 +91,11 @@ url_conversions = [{"search":"wiki.artifactory.org.au/en/",
                    "replace":"raw.githubusercontent.com/Perth-Artifactory/website/master/_pages/",
                    "suffix":".md",
                    "functions":[download_page,mrkdwn]},
+                  {"search":"reddit.com/r/",
+                   "find":"",
+                   "replace":"",
+                   "suffix":"",
+                   "functions":[reddit.format_post]}
                    ]
 
 data_new = process_pages()
