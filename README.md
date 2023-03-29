@@ -46,7 +46,7 @@ Create a Slack application with:
 
 Please only use the bot for Artifactory tasks, while it is relatively cheap to run it's not free.
 
-* The bot will very confidently be completely wrong if it doesn't know the answer to a question. Make sure you fact check any replies before using them elsewhere. It will go so far as to create fictious URLs etc.
+* The bot will very confidently be completely wrong if it doesn't know the answer to a question. Make sure you fact check any replies before using them elsewhere. It will go so far as to create fictious URLs and businesses.
 * It has a a pretty good understanding of upcoming events and pages on our main website. It can access specific pages on the wiki as well but it doesn't always do so well with markdown tables.
 * If something is wrong about the message, like the tone etc, ask the bot to change it.
 * If you find that you're adding the same instruction frequently (like "We refer to ourselves as The Artifactory rather than Perth Artifactory Inc") let @Fletcher know and we may be able to include it in the priming.
