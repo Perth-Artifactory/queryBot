@@ -33,7 +33,7 @@ def process_page(url):
             for f in block["functions"]:
                 i = f(i)
             return i
-    i = {"url":url,"download_url":url}
+    i = {"url":url,"download_url":url,"title":"Webpage"}
     return download_page(i)
 
 def process_pages(url=None):
