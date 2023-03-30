@@ -59,7 +59,6 @@ def tagged(body, say):
         # pull out info
         id = body["authorizations"][0]["user_id"]
         ts = body["event"]["ts"]
-        pprint(body)
         message = body["event"]["text"].replace(f'<@{id}>',"QueryBot")
 
         # send a stalling message to let users know we've received the request
