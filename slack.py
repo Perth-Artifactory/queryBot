@@ -3,10 +3,26 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 from pprint import pprint
 import json
 
-import gpt
+import logging
+from slack_logger import SlackFormatter, SlackHandler
 
 with open("config.json","r") as f:
     config = json.load(f)
+
+# Set up logging
+if config["bot"]["debug"]:
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.INFO)
+
+if config["bot"]["slack_error_webhook"]:
+    sh = SlackHandler(config["slack_webhook"])
+    sh.setFormatter(SlackFormatter())
+    sh.setLevel(logging.ERROR)
+    logging.getLogger('').addHandler(sh)
+
+# This is going to prefetch some stuff so set up logging first
+import gpt
 
 def structure_reply(bot_id,messages,ignore_mention=False):
     conversation = []
@@ -28,7 +44,7 @@ def structure_reply(bot_id,messages,ignore_mention=False):
 def check_perm(id):
     control_channel_members = []
     for channel in config["unrestricted_channels"]:
-        control_channel_members += app.client.conversations_members(channel=config["unrestricted_channels"]).data["members"]
+        control_channel_members += app.client.conversations_members(channel=channel).data["members"]
     return id in control_channel_members
 
 app = App(token=config["bot_token"])
@@ -59,7 +75,7 @@ def tagged(body, say):
         gpt_response = gpt.respond(prompts=struct)
         app.client.chat_update(channel=body["event"]["channel"], ts=stalling_id, as_user = True, text = gpt_response)
     else:
-        print(f'Tagged in a channel that wasn\'t whitelisted. ({body["event"]["channel"]})')
+        logging.info(f'Tagged in a channel that wasn\'t whitelisted. ({body["event"]["channel"]})')
 
 @app.event("reaction_added")
 def emoji_prompt(event, say, body):
@@ -72,6 +88,7 @@ def emoji_prompt(event, say, body):
             channel=event["item"]["channel"],
             inclusive=True,
             ts=message_ts)
+        logging.info(f'Got authed :chat-gpt: in {event["item"]["channel"]} Message: {result.data["messages"][-1]["text"]}')
         struct = structure_reply(bot_id=id,messages=result.data["messages"],ignore_mention=True)
         struct[-1]["content"] += " !calendar !slack"
         gpt_response = gpt.respond(prompts=struct)
@@ -80,8 +97,9 @@ def emoji_prompt(event, say, body):
 
 @app.event("message")
 def handle_message_events(body, logger):
-    logger.info(body)
+    pass
 
 if __name__ == "__main__":
     handler = SocketModeHandler(app, config["app_token"])
+    logging.debug("Ready")
     handler.start()

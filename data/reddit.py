@@ -24,7 +24,6 @@ def get_post(url):
     submission = reddit.submission(url=url["url"])
     submission.comments.replace_more(limit=None)
     data = {"submission":submission,"comments":[]}
-    #pprint(vars(submission))
     for comment in submission.comments:
         if comment.author:
             if comment.author.name != "AutoModerator":

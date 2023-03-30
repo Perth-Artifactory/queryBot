@@ -1,13 +1,8 @@
 import requests
 import json
-import html
-import re
 from pprint import pprint
-import hashlib
-import openai
-from datetime import datetime, timedelta
-import time
-import sys
+from datetime import datetime
+import logging
 
 with open("config.json","r") as f:
     config = json.load(f)
@@ -17,11 +12,6 @@ contacts_url = "https://api.tidyhq.com/v1/contacts"
 membership_url = "https://api.tidyhq.com/v1/membership_levels/{}/memberships"
 membership_full_url = "https://api.tidyhq.com/v1//memberships"
 contact_membership_url = "https://api.tidyhq.com/v1/contacts/{}/memberships"
-
-group_pairs = []
-group_pairs.append([9282,[9283],2139,"band"]) # band
-group_pairs.append([2069,[4958,2368],428,"concession"]) # concession
-group_pairs.append([2077,[4957,99624],427,"full"]) # full
 
 def get_contact(id):
     r = requests.get(contacts_url+"/"+str(id),params={"access_token":token})
@@ -60,7 +50,7 @@ def time_since_membership(memberships):
     return newest
 
 def format_tidyhq():
-    print("Getting TidyHQ data")
+    logging.info("Getting TidyHQ data")
     r = requests.get(membership_full_url,params={"access_token":token})
     memberships = r.json()
     m_strings = "These are the current members of The Artifactory (from TidyHQ)"
@@ -69,7 +59,7 @@ def format_tidyhq():
             contact = get_contact(membership["contact_id"])
             m_name = membership["membership_level"]["name"].split(" ")[0]
             
-            # Get start date
+            # Get start date, not currently used due to token limit
             try:
                 start_date = datetime.strptime(membership["start_date"], "%Y-%m-%dT%H:%M:%S+08:00")
             except ValueError:
@@ -91,15 +81,19 @@ def format_tidyhq():
             s = ""
             # Name and membership
             s += f'{contact["first_name"]} {contact["last_name"]} is a {m_name} '
+
             # Contact
             s += f'Phone: {contact["phone_number"]} emergency contact: {contact["emergency_contact_person"]} ({contact["emergency_contact_number"]}) '
-            # Join date
+
+            # Join date, not used due to token limit
             #s += f'They first joined the Artifactory {start_date.strftime("%Y-%m-%d")} '
+
             # Locker assignment
             if "Locker assignment" in c_data:
                 s += f'locker is {c_data["Locker assignment"]} '
             else:
                 s += 'no locker '
+                
             # Key assignment
             if "RFID Issued Key Tag Status" in c_data:
                 s += "has 24/7"

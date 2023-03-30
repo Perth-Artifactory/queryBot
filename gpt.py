@@ -2,6 +2,7 @@ import openai
 import json
 from pprint import pprint
 import re
+import logging
 
 from data import events
 
@@ -14,6 +15,7 @@ with open("data.json","r") as f:
 optional = {}
 
 # prefetch internet pages
+logging.info("Prefetching internet pages")
 from data import matryoshka
 with open("babushka.json","r") as f:
     webpages = json.load(f)
@@ -21,9 +23,11 @@ with open("babushka.json","r") as f:
 
 # prefetch slack channels on launch and add to optionals
 from data import workspace
+logging.info("Prefetching Slack channel info")
 optional["slack"] = workspace.format_channels
 
 from data import tidyhq
+logging.info("Prefetching TidyHQ data")
 tidy_data = tidyhq.format_tidyhq()
 def tidy():
     return tidy_data
@@ -45,17 +49,19 @@ def respond(prompts):
             if command_search:
                 p["content"] = re.sub(f'!{option}-[^\s]+', "", p["content"])
                 extras.append(optional[option](command_search[0]))
-                #extras.append({"role": "user", "content": optional[option](command_search[0])})
+                logging.debug(f'Found: {command_search[0]}')
             elif "!"+option in p["content"]:
-                print("Adding", option)
+                logging.debug(f'Found: {option}')
                 p["content"] = p["content"].replace("!"+option, "")
                 if option not in used:
                     content = optional[option]()
-                    print("Content")
-                    print(content)
+                    logging.debug(content)
                     extras.append({"role": "user", "content": content})
                     used.append(option)
+                else:
+                    logging.debug(f'{option} already used')
         if '!nopages' in p["content"]:
+            logging.debug(f'Found nopages, removing pages')
             p["content"] = p["content"].replace("!nopages", "")
             current_pages = []
         r_prompts.append(p)
@@ -65,15 +71,12 @@ def respond(prompts):
               {"role": "user", "content": data["workshop usage"]}]
     messages = messages + current_pages + extras + r_prompts
 
-    pprint(messages)
-
     try:
         r = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=messages)
 
-    except openai.error.InvalidRequestError as e:
-        print(e)
+    except openai.error.InvalidRequestError:
         return "Something has gone wrong (It's likely that this conversation has exceeded the number of things I can process at once.) If this is a thread try deleting some of the previous comments first."
-    print(f'{r["usage"]["prompt_tokens"]}, {r["usage"]["completion_tokens"]}, {r["usage"]["total_tokens"]}/4096')
+    logging.info(f'{r["usage"]["prompt_tokens"]}, {r["usage"]["completion_tokens"]}, {r["usage"]["total_tokens"]}/4096')
     return r["choices"][0]["message"]["content"]

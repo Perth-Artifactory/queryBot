@@ -1,6 +1,7 @@
 from datetime import datetime
 import os.path
 import json
+import logging
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -14,25 +15,27 @@ def pull_events():
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/calendar.readonly'])
     if not creds:
-        print("You need to run auth_google.py")
+        logging.error("You need to run auth_google.py")
     elif not creds.valid:
-        print("creds invalid")
+        logging.warn("Google credentials invalid?")
     try:
         service = build('calendar', 'v3', credentials=creds)
 
         # Call the Calendar API
         now = datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        logging.info("Pulling calendar")
         events_result = service.events().list(calendarId=config["calendar_id"], timeMin=now,
                                               maxResults=20, singleEvents=True,
                                               orderBy='startTime').execute()
         events = events_result.get('items', [])
+        logging.debug(f'Got {len(events)} events')
 
         if not events:
             return []
         return events
 
-    except HttpError as error:
-        print('An error occurred: %s' % error)
+    except HttpError as e:
+        return []
 
 def format_events():
     s = f'The time right now is {datetime.now()}. These are the next 20 events:'

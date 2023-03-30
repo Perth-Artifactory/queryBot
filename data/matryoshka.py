@@ -5,6 +5,7 @@ import re
 from pprint import pprint
 import hashlib
 import openai
+import logging
 
 from data import reddit
 
@@ -26,7 +27,6 @@ def process_page(url):
     for block in url_conversions:
         if block["search"] in url:
             i = {"url":url,"download_url":url.replace(block["find"],block["replace"])+block["suffix"]}
-
             for f in block["functions"]:
                 i = f(i)
             return i
@@ -49,7 +49,7 @@ def process_pages(url=None):
 
 def gpt_summarise(pagedata):
     openai.api_key_path = './key'
-    print(f'initiating summary of {pagedata["title"]}')
+    logging.info(f'initiating summary of {pagedata["title"]}')
     try:
         r = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
@@ -108,11 +108,14 @@ try:
 except FileNotFoundError:
     data_old = {}
 data_final = {}
+logging.info(f'Have {len(data_new)} items from config {len(data_old)} in cache')
 
 for d in data_new:
     if d not in data_old:
+        logging.debug(f'{d} not in cache')
         data_final[d] = gpt_summarise(data_new[d])
     elif data_new[d]["content"] != data_old[d]["content"]:
+        logging.debug(f'Version of {d} in cache is stale')
         data_final[d] = gpt_summarise(data_new[d])
     else:
         data_final[d] = data_old[d]
