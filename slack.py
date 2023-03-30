@@ -45,58 +45,120 @@ def structure_reply(bot_id,messages,ignore_mention=False):
             conversation.append({"role": "user", "content": message["text"]})
     return conversation
 
-def check_perm(id):
+# matchers
+
+def gpt_emoji(event) -> bool:
+    return event.get("reaction") == "chat-gpt"
+
+def approval_emoji(event) -> bool:
+    return event.get("reaction") in ["+1","-1"]
+
+def authed(event):
     control_channel_members = []
     for channel in config["unrestricted_channels"]:
         control_channel_members += app.client.conversations_members(channel=channel).data["members"]
-    return id in control_channel_members
+    return event.get("user") in control_channel_members
+
+def unrestricted_channel(event):
+    return event.get("channel") in config["unrestricted_channels"]
 
 app = App(token=config["bot_token"])
 
-@app.event("app_mention")
-def tagged(body, say):
-    if body["event"]["channel"] in config["unrestricted_channels"]:
-        # pull out info
-        id = body["authorizations"][0]["user_id"]
-        ts = body["event"]["ts"]
-        message = body["event"]["text"].replace(f'<@{id}>',"QueryBot")
+@app.event(event="app_mention", matchers=[authed,unrestricted_channel])
+def tagged(body, event, say):
+    # pull out info
+    id = body["authorizations"][0]["user_id"]
+    ts = event.get("ts")
+    message = event.get("text").replace(f'<@{id}>',"QueryBot")
 
-        # send a stalling message to let users know we've received the request
-        r = say(":spinthinking:",thread_ts=ts)
-        stalling_id = r.data["message"]["ts"]
+    # send a stalling message to let users know we've received the request
+    r = say(":spinthinking:",thread_ts=ts)
+    stalling_id = r.data["message"]["ts"]
 
-        # Retrieve extra context for messages if present
-        struct = [{"role": "user", "content": message}]
-        if "thread_ts" in body["event"]:
-            result = app.client.conversations_replies(
-                channel=body["event"]["channel"],
-                inclusive=True,
-                ts=body["event"]["thread_ts"])
-            struct = structure_reply(bot_id=id,messages=result.data["messages"])
+    # Retrieve extra context for messages if present
+    struct = [{"role": "user", "content": message}]
+    if event.get("thread_ts"):
+        result = app.client.conversations_replies(
+            channel=event.get("channel"),
+            inclusive=True,
+            ts=event.get("thread_ts"))
+        struct = structure_reply(bot_id=id,messages=result.data["messages"])
 
-        # Replace message with ChatGPT response
-        gpt_response = gpt.respond(prompts=struct)
-        app.client.chat_update(channel=body["event"]["channel"], ts=stalling_id, as_user = True, text = gpt_response)
-    else:
-        logging.info(f'Tagged in a channel that wasn\'t whitelisted. ({body["event"]["channel"]})')
+    # Replace message with ChatGPT response
+    gpt_response = gpt.respond(prompts=struct)
+    app.client.chat_update(
+        channel=event.get("channel"),
+        ts=stalling_id, 
+        as_user=True, 
+        text=gpt_response
+    )
+    
+@app.event(event="app_mention")
+def tagged(event):
+    logging.info(f'Tagged in a channel that wasn\'t whitelisted or by a user that isn\'t authed. ({event.get("user")} in {event.get("channel")})')
 
-@app.event("reaction_added")
+@app.event(event="reaction_added", matchers=[gpt_emoji, authed])
 def emoji_prompt(event, say, body):
     message_ts = event["item"]["ts"]
     id = body["authorizations"][0]["user_id"]
-    if event["reaction"] == "chat-gpt" and check_perm(id=event["user"]):
-        r = say(":spinthinking:",thread_ts=message_ts)
-        stalling_id = r.data["message"]["ts"]
-        result = app.client.conversations_replies(
-            channel=event["item"]["channel"],
-            inclusive=True,
-            ts=message_ts)
-        logging.info(f'Got authed :chat-gpt: in {event["item"]["channel"]} Message: {result.data["messages"][-1]["text"]}')
-        struct = structure_reply(bot_id=id,messages=result.data["messages"],ignore_mention=True)
-        struct[-1]["content"] += " !calendar !slack"
-        gpt_response = gpt.respond(prompts=struct)
-        caveat = "\n(This response was automatically generated)"
-        app.client.chat_update(channel=event["item"]["channel"], ts=stalling_id, as_user = True, text = gpt_response+caveat)
+    r = say(":spinthinking:",thread_ts=message_ts)
+    stalling_id = r.data["message"]["ts"]
+    result = app.client.conversations_replies(
+        channel=event["item"].get("channel"),
+        inclusive=True,
+        ts=message_ts)
+    logging.info(f'Got authed :chat-gpt: in {event["item"]["channel"]}')
+    struct = structure_reply(bot_id=id,messages=result.data["messages"],ignore_mention=True)
+    struct[-1]["content"] += " !calendar !slack"
+    gpt_response = gpt.respond(prompts=struct)
+    caveat = "\n(This response was automatically generated)"
+    app.client.chat_update(
+        channel=event["item"].get("channel"),
+        ts=stalling_id,
+        as_user=True,
+        text = gpt_response+caveat
+    )
+    app.client.reactions_add(
+        channel=event["item"].get("channel"),
+        timestamp=stalling_id,
+        name="+1"
+    )
+    app.client.reactions_add(
+        channel=event["item"].get("channel"),
+        timestamp=stalling_id,
+        name="-1"
+    )
+
+@app.event(event="reaction_added", matchers=[approval_emoji, authed])
+def killswitch(event, say, body, logger):
+    logger.info(body)
+    message_ts = event["item"]["ts"]
+    id = body["authorizations"][0]["user_id"]
+    # Only react if the message being reacted to is us and don't react if we're the one reacting
+    if event.get("user") != id and event.get("item_user") == id:
+        if event.get("reaction") == "-1":
+            app.client.chat_update(
+                channel=event["item"].get("channel"),
+                ts=event["item"].get("ts"),
+                as_user=True,
+                text = f'I\'m sorry, the response I generated for this query was marked as innacurate by <@{event.get("user")}>'
+            )
+        elif event.get("reaction") == "+1":
+            pass
+        app.client.reactions_remove(
+            channel=event["item"].get("channel"),
+            timestamp=event["item"].get("ts"),
+            name="+1"
+        )
+        app.client.reactions_remove(
+            channel=event["item"].get("channel"),
+            timestamp=event["item"].get("ts"),
+            name="-1"
+        )
+
+@app.event("reaction_added")
+def handle_reaction_added_events(body, logger):
+    logger.info(body)
 
 @app.event("message")
 def handle_message_events(body, logger):
