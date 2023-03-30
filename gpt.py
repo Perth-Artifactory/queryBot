@@ -41,26 +41,28 @@ def respond(prompts):
     used = []
     current_pages = pages
     for p in prompts:
-        for option in optional:
-            command_search = re.findall(f'!{option}-([^\s]+)', p["content"])
-            if command_search:
-                p["content"] = re.sub(f'!{option}-[^\s]+', "", p["content"])
-                extras.append(optional[option](command_search[0]))
-                logging.debug(f'Found: {command_search[0]}')
-            elif "!"+option in p["content"]:
-                logging.debug(f'Found: {option}')
-                p["content"] = p["content"].replace("!"+option, "")
-                if option not in used:
-                    content = optional[option]()
-                    logging.debug(content)
-                    extras.append({"role": "user", "content": content})
-                    used.append(option)
-                else:
-                    logging.debug(f'{option} already used')
-        if '!nopages' in p["content"]:
-            logging.debug(f'Found nopages, removing pages')
-            p["content"] = p["content"].replace("!nopages", "")
-            current_pages = []
+        # Only listen to commands if they're issued by users
+        if p["role"] == "user":
+            for option in optional:
+                command_search = re.findall(f'!{option}-([^\s]+)', p["content"])
+                if command_search:
+                    p["content"] = re.sub(f'!{option}-[^\s]+', "", p["content"])
+                    extras.append(optional[option](command_search[0]))
+                    logging.debug(f'Found: {command_search[0]}')
+                elif "!"+option in p["content"]:
+                    logging.debug(f'Found: {option}')
+                    p["content"] = p["content"].replace("!"+option, "")
+                    if option not in used:
+                        content = optional[option]()
+                        logging.debug(content)
+                        extras.append({"role": "user", "content": content})
+                        used.append(option)
+                    else:
+                        logging.debug(f'{option} already used')
+            if '!nopages' in p["content"]:
+                logging.debug(f'Found nopages, removing pages')
+                p["content"] = p["content"].replace("!nopages", "")
+                current_pages = []
         r_prompts.append(p)
 
     try:
