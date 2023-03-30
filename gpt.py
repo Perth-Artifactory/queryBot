@@ -1,6 +1,6 @@
 import openai
 import json
-from pprint import pprint
+from pprint import pformat
 import re
 import logging
 
@@ -81,7 +81,7 @@ def respond(prompts):
         logging.warn("System prompt not set in prompts.txt, using default")
 
     messages = initial_prompts + current_pages + extras + r_prompts
-
+    logging.debug(pformat(messages))
     try:
         r = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",

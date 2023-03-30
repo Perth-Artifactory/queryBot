@@ -18,6 +18,8 @@ def download_page(pagedata):
     titles = re.findall("<title[^>]*>(.*)<\/title>", p.text)
     if titles:
         pagedata["title"] = titles[0]
+    else:
+        pagedata["title"] = "Webpage"
     return pagedata
 
 def mrkdwn(pagedata):
@@ -29,7 +31,12 @@ def process_page(url):
         url = url[1:-1]
     for block in url_conversions:
         if block["search"] in url:
-            i = {"url":url,"download_url":url.replace(block["find"],block["replace"])+block["suffix"]}
+            d_url = url
+            for s in block["replace"]:
+                d_url = d_url.replace(s[0],s[1])
+            d_url += block["suffix"]
+            i = {"url": url,
+                 "download_url": d_url}
             for f in block["functions"]:
                 i = f(i)
             return i
@@ -87,20 +94,21 @@ def single_page(url):
     return {"role": "user", "content": f'There is a webpage titled {p["title"]} at {p["url"]} It contains:\n{p["content"]}'}
 
 url_conversions = [{"search":"wiki.artifactory.org.au/en/",
-                   "find":"wiki.artifactory.org.au/en/",
-                   "replace":"raw.githubusercontent.com/Perth-Artifactory/wiki/main/",
-                   "suffix":".md",
-                   "functions":[download_page,mrkdwn]},
+                    "replace":[("wiki.artifactory.org.au/en/","raw.githubusercontent.com/Perth-Artifactory/wiki/main/")],
+                    "suffix":".md",
+                    "functions":[download_page,mrkdwn]},
                   {"search":"artifactory.org.au/pages/",
-                   "find":"artifactory.org.au/pages/",
-                   "replace":"raw.githubusercontent.com/Perth-Artifactory/website/master/_pages/",
+                   "replace":[("artifactory.org.au/pages/","raw.githubusercontent.com/Perth-Artifactory/website/master/_pages/")],
                    "suffix":".md",
                    "functions":[download_page,mrkdwn]},
                   {"search":"reddit.com/r/",
-                   "find":"",
-                   "replace":"",
+                   "replace":[],
                    "suffix":"",
-                   "functions":[reddit.format_post]}
+                   "functions":[reddit.format_post]},
+                  {"search":"github.com",
+                   "replace":[("github.com/","raw.githubusercontent.com/"),("/blob","")],
+                   "suffix":"",
+                   "functions":[download_page]},
                    ]
 
 data_new = process_pages()
