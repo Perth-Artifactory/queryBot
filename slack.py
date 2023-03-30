@@ -89,7 +89,7 @@ def tagged(body, event, say):
             channel=event.get("channel"),
             inclusive=True,
             ts=event.get("thread_ts"))
-        struct = structure_reply(bot_id=id,messages=result.data["messages"][:-1])
+        struct = structure_reply(bot_id=id,messages=result.data["messages"])
 
     # Replace message with ChatGPT response
     gpt_response = gpt.respond(prompts=struct)
