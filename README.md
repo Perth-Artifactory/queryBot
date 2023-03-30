@@ -36,7 +36,12 @@ Create an account and generate an API token.
    * `reddit_secret` - As above
    * `tidyhq_token` - TidyHQ API token
    * `calendar_id` - The ID for the google calendar you want the bot to know about
-   * `urls` - Any web pages you want the bot to know about. Supports pages on `artifactory.org.au` and `wiki.artifactory.org.au`
+   * `urls` - Any web pages you want the bot to know about. Supports pages on `artifactory.org.au`, `wiki.artifactory.org.au`, and `reddit.com` the best.
+   * bot
+     * `dev [true|false]` - Skips some time/resource intensive data gathering
+     * `debug [true|false]` - Outputs debugging data
+     * `slack_error_webhook` - Sends logging data to a slack webhook
+     * `name` - The name of the bot, not used currently.
 * Run `auth_google.py` to authenticate with google for upcoming events
 ## Running
 
