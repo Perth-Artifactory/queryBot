@@ -69,7 +69,7 @@ Add the following to a message and the bot should get some info about that categ
 * `!calendar` - The next 20 events
 * `!slack` - Some basic information about public slack channels with over 30 people
 * `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our [website](https://artifactory.org.au)/[wiki](https://wiki.artifactory.org.au), Github and Reddit which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc). Because `!url` adds a url as part of the conversation primer (before anything said on Slack) you may need to specify that it was "the reddit post I sent you earlier" etc if you've used the command in a thread.
-* `!nopages` - To exclude some pages from our website that are excluded from the bot by default.
+* `!nopages` - To exclude some pages from our website that are included by default.
 * `!tidyhq` - Some basic information for current Artifactory members.
 
 ### Elsewhere on Slack
@@ -79,3 +79,17 @@ If @queryBot is in the channel (`/invite @querybot`) you can react to a users me
 The bot will react with :+1: and :-1: to every message it sends using this method. This makes the feature below easier to use.
 
 Sometimes the bot gets an answer wrong and you may not have permissions on Slack to delete an incorrect message. If you react with a :-1: the bot will replace it's answer with a removal message. If you react with a :+1: it will remove it's own approval emoji from the message to reduce the likelyhood that other users will misclick.
+
+## Understanding conversation order
+
+It's important to understand how commands affect the conversation so that you can communicate effectively with the bot. Sometimes you'll want to reference a url you just gave the bot but it will claim not to know about it. This is because of the built in conversation order.
+
+Before the conversation you see in Slack happens there's a conversation that's gone on in the background.
+
+1. A system prompt - This gives the bot a good idea of what it is and what it's expected to do overall. As an example ChatGPT uses the system prompt "You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible."
+2. Hardcoded follow up prompts in `prompts.txt` - This is typically supplementary information that is useful for most conversations like "We refer to the organisation as 'The Artifactory'"
+3. The contents of webpages from `urls` in `config.json` unless `!nopages` is used - Giving the bot access to a webpage containing basic information about the organisation will help most conversations. The exception is when you know that another command you're sending will provide the exact information required. In that instance sending `!nopages` will exclude these pages and save you tokens.
+4. The output of any `!commands` you've added anywhere in the conversation - No matter where in the conversation the command was used they output will always end up here instead. **This is what causes the issue raised at the start of this section**
+5. The visible conversation from slack - This *excludes* thread replies that don't tag the bot when you're in a unrestricted channel and *only includes* the message you reacted to if it's an emoji triggered response.
+
+A good way to reference command information is to say "That webpage I gave you earlier" etc. As far as the bot is concerned everything except the system prompt actually came from you.
