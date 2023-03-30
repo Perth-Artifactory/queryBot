@@ -57,6 +57,8 @@ def get_single_channel(channel):
         ).data["messages"]
 
         for message in messages:
+            if not message.get("user"):
+                continue
             if message["user"] not in ids:
                 ids[message["user"]] = get_user_info(message["user"])
             
