@@ -91,7 +91,7 @@ def single_page(url):
         p = pages[page]
     if type(p) == str:
         return {"role": "user", "content": p}
-    return {"role": "user", "content": f'There is a webpage titled {p["title"]} at {p["url"]} It contains:\n{p["content"]}'}
+    return f'There is a webpage titled {p["title"]} at {p["url"]} It contains:\n{p["content"]}'
 
 url_conversions = [{"search":"wiki.artifactory.org.au/en/",
                     "replace":[("wiki.artifactory.org.au/en/","raw.githubusercontent.com/Perth-Artifactory/wiki/main/")],

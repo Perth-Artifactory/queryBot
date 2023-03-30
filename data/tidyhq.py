@@ -49,7 +49,7 @@ def time_since_membership(memberships):
             newest = int(since)
     return newest
 
-def format_tidyhq():
+def format_tidyhq(message=None):
     logging.info("Getting TidyHQ data")
     if config["bot"]["dev"]:
         logging.info("Data not grabbed in development mode")

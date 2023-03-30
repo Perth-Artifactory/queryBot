@@ -21,7 +21,7 @@ with open("babushka.json","r") as f:
 # prefetch slack channels on launch and add to optionals
 from data import workspace
 logging.info("Prefetching Slack channel info")
-optional["slack"] = workspace.format_channels
+optional["slackpopular"] = workspace.format_channels
 
 from data import tidyhq
 logging.info("Prefetching TidyHQ data")
@@ -34,6 +34,7 @@ def respond(prompts):
     # Add command time optionals
     optional["calendar"] = events.format_events
     optional["url"] = matryoshka.single_page
+    optional["slackmsg"] = workspace.find_channels
 
     # Insert optionals
     extras = []
@@ -47,13 +48,13 @@ def respond(prompts):
                 command_search = re.findall(f'!{option}-([^\s]+)', p["content"])
                 if command_search:
                     p["content"] = re.sub(f'!{option}-[^\s]+', "", p["content"])
-                    extras.append(optional[option](command_search[0]))
+                    extras.append({"role": "user", "content": optional[option](command_search[0])})
                     logging.debug(f'Found: {command_search[0]}')
                 elif "!"+option in p["content"]:
                     logging.debug(f'Found: {option}')
                     p["content"] = p["content"].replace("!"+option, "")
                     if option not in used:
-                        content = optional[option]()
+                        content = optional[option](p["content"])
                         logging.debug(content)
                         extras.append({"role": "user", "content": content})
                         used.append(option)

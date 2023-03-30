@@ -37,7 +37,7 @@ def pull_events():
     except HttpError as e:
         return []
 
-def format_events():
+def format_events(message=None):
     s = f'The time right now is {datetime.now()}. These are the next 20 events:'
     descriptions = {}
     for event in pull_events():

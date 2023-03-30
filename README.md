@@ -67,7 +67,8 @@ Send a message to this channel that tags @queryBot to begin a conversation. Your
 Add the following to a message and the bot should get some info about that category to help inform its answer.
 
 * `!calendar` - The next 20 events
-* `!slack` - Some basic information about public slack channels with over 30 people
+* `!slackpopular` - Some basic information about public slack channels with over 30 people
+* `!slackmsg` - The last 30 messages in any channels mentioned during the conversation **provided that the bot is in the mentioned channel**
 * `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our [website](https://artifactory.org.au)/[wiki](https://wiki.artifactory.org.au), Github and Reddit which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc). Because `!url` adds a url as part of the conversation primer (before anything said on Slack) you may need to specify that it was "the reddit post I sent you earlier" etc if you've used the command in a thread.
 * `!nopages` - To exclude some pages from our website that are included by default.
 * `!tidyhq` - Some basic information for current Artifactory members.

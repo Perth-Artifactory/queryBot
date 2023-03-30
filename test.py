@@ -1,9 +1,11 @@
-from data import tidyhq
+import json
+from slack_bolt import App
 from pprint import pprint
+import logging
+import sys
 
+from data import workspace
 
-tidy_data = tidyhq.format_tidyhq()
-def tidy():
-    return tidy_data
+logging.basicConfig(level=logging.DEBUG)
 
-print(tidy())
+print(workspace.format_channel("bot-testing"))

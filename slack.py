@@ -78,7 +78,6 @@ def tagged(body, event, say):
     id = body["authorizations"][0]["user_id"]
     ts = event.get("ts")
     message = event.get("text").replace(f'<@{id}>',"QueryBot")
-
     # send a stalling message to let users know we've received the request
     r = say(":spinthinking:",thread_ts=ts)
     stalling_id = r.data["message"]["ts"]
@@ -90,7 +89,7 @@ def tagged(body, event, say):
             channel=event.get("channel"),
             inclusive=True,
             ts=event.get("thread_ts"))
-        struct = structure_reply(bot_id=id,messages=result.data["messages"])
+        struct = structure_reply(bot_id=id,messages=result.data["messages"][:-1])
 
     # Replace message with ChatGPT response
     gpt_response = gpt.respond(prompts=struct)

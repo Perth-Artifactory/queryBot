@@ -18,6 +18,7 @@
                 "groups:history",
                 "reactions:read",
                 "users:read",
+                "users.profile:read",
                 "groups:read",
                 "reactions:write"
             ]
