@@ -74,3 +74,7 @@ Add the following to a message and the bot should get some info about that categ
 ### Elsewhere on Slack
 
 If @queryBot is in the channel (`/invite @querybot`) you can react to a users message with `:chat-gpt:` and the bot will respond to their message. You won't be able to do follow up messages etc. However, if the message you're reacting to has one of the !commands used in the unrestricted channel then these will be executed. Please be mindful of this (especially when using `!url`)
+
+The bot will react with :+1: and :-1: to every message it sends using this method. This makes the feature below easier to use.
+
+Sometimes the bot gets an answer wrong and you may not have permissions on Slack to delete an incorrect message. If you react with a :-1: the bot will replace it's answer with a removal message. If you react with a :+1: it will remove it's own approval emoji from the message to reduce the likelyhood that other users will misclick.

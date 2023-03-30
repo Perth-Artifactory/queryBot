@@ -18,7 +18,8 @@
                 "groups:history",
                 "reactions:read",
                 "users:read",
-                "groups:read"
+                "groups:read",
+                "reactions:write"
             ]
         }
     },
