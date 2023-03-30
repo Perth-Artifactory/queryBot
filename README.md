@@ -29,7 +29,7 @@ Create a Slack application with:
 
 * `./key` - your OpenAI token
 * `config.json.example` -> `config.json`
-  * `channel` - ID of your Slack channel, remember that access to this channel includes an ability to cost you money. 
+   * `unrestricted_channels` - A list of slack channel IDs for unrestricted channels. Remember that access to these channels includes an ability to cost you money. 
    * `app_token` - Your slack app token 
    * `bot_token` - Your slack bot token
    * `reddit_id` - Create a [reddit personal use script](https://www.reddit.com/prefs/apps)

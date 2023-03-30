@@ -26,14 +26,16 @@ def structure_reply(bot_id,messages,ignore_mention=False):
     return conversation
 
 def check_perm(id):
-    control_channel_members = app.client.conversations_members(channel=config["channel"]).data["members"]
+    control_channel_members = []
+    for channel in config["unrestricted_channels"]:
+        control_channel_members += app.client.conversations_members(channel=config["unrestricted_channels"]).data["members"]
     return id in control_channel_members
 
 app = App(token=config["bot_token"])
 
 @app.event("app_mention")
 def tagged(body, say):
-    if body["event"]["channel"] == config["channel"]:
+    if body["event"]["channel"] in config["unrestricted_channels"]:
         # pull out info
         id = body["authorizations"][0]["user_id"]
         ts = body["event"]["ts"]
@@ -56,10 +58,10 @@ def tagged(body, say):
         gpt_response = gpt.respond(prompts=struct)
         app.client.chat_update(channel=config["channel"], ts=stalling_id, as_user = True, text = gpt_response)
     else:
-        say(f'I am not authorised to communicate here. Head to <#{config["channel"]}>')
+        print(f'Tagged in a channel that wasn't whitelisted. ({body["event"]["channel"]})')
 
 @app.event("reaction_added")
-def hmm(event, say, body):
+def emoji_prompt(event, say, body):
     message_ts = event["item"]["ts"]
     id = body["authorizations"][0]["user_id"]
     if event["reaction"] == "chat-gpt" and check_perm(id=event["user"]):

@@ -1,4 +1,4 @@
-{"channel":"CXXXX",
+{"unrestricted_channels":["CXXXXX"],
  "app_token": "xapp-XXXX",
  "bot_token": "xoxb-XXXX",
  "reddit_id":"XXX",
