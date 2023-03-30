@@ -20,15 +20,15 @@ Create an account and generate an API token.
 
 ### Slack
 
-Create a Slack application with:
-
-* Socket mode enabled and an event subscription to `app_mention` and `reactions:read`
-* The following OAuth permissions: `app_mentions:read`, `channels:history`, `channels:read`, `chat:write`, `groups:history`, `groups:read`
+* Create a Slack application using `./rsc/slack.manifest.json`
+* Add an app level token with `connections:write` and save the app token
+* Install the app to your workspace and save the bot token
+* Add the :chat-gpt: emoji from `./rsc/chat-gpt.png` as a custom emoji
 
 ## Configuration
 
 * `./key` - your OpenAI token
-* `config.json.example` -> `config.json`
+* `./rsc/config.json.example` -> `config.json`
    * `unrestricted_channels` - A list of slack channel IDs for unrestricted channels. Remember that access to these channels includes an ability to cost you money. 
    * `app_token` - Your slack app token 
    * `bot_token` - Your slack bot token
