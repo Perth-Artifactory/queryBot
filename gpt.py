@@ -8,9 +8,6 @@ from data import events
 
 openai.api_key_path = './key'
 
-with open("data.json","r") as f:
-    data = json.load(f)
-
 # Create optional information flags
 optional = {}
 
