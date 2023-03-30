@@ -45,6 +45,14 @@ def structure_reply(bot_id,messages,ignore_mention=False):
             conversation.append({"role": "user", "content": message["text"]})
     return conversation
 
+def clean_messages(messages):
+    clean = []
+    for message in messages:
+        for command in config["bot"]["restricted_commands"]:
+            message["text"] = message["text"].replace(f'!{command}',"")
+        clean.append(message)
+    return clean
+
 # matchers
 
 def gpt_emoji(event) -> bool:
@@ -90,7 +98,7 @@ def tagged(body, event, say):
         channel=event.get("channel"),
         ts=stalling_id, 
         as_user=True, 
-        text=gpt_response
+        text=gpt_response 
     )
     
 @app.event(event="app_mention")
@@ -107,8 +115,9 @@ def emoji_prompt(event, say, body):
         channel=event["item"].get("channel"),
         inclusive=True,
         ts=message_ts)
+    
     logging.info(f'Got authed :chat-gpt: in {event["item"]["channel"]}')
-    struct = structure_reply(bot_id=id,messages=result.data["messages"],ignore_mention=True)
+    struct = structure_reply(bot_id=id,messages=clean_messages(result.data["messages"]),ignore_mention=True)
     struct[-1]["content"] += " !calendar !slack"
     gpt_response = gpt.respond(prompts=struct)
     caveat = "\n(This response was automatically generated)"

@@ -9,4 +9,5 @@
  "bot":{"dev":false,
         "debug":false,
         "slack_error_webhook":"",
-        "name":"queryBot"}}
+        "name":"queryBot",
+        "restricted_commands":["tidyhq"]}}
