@@ -58,7 +58,7 @@ def tagged(body, say):
         gpt_response = gpt.respond(prompts=struct)
         app.client.chat_update(channel=config["channel"], ts=stalling_id, as_user = True, text = gpt_response)
     else:
-        print(f'Tagged in a channel that wasn't whitelisted. ({body["event"]["channel"]})')
+        print(f'Tagged in a channel that wasn\'t whitelisted. ({body["event"]["channel"]})')
 
 @app.event("reaction_added")
 def emoji_prompt(event, say, body):
