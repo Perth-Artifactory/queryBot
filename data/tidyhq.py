@@ -51,6 +51,9 @@ def time_since_membership(memberships):
 
 def format_tidyhq():
     logging.info("Getting TidyHQ data")
+    if config["bot"]["dev"]:
+        logging.info("Data not grabbed in development mode")
+        return "Data not grabbed because we're running in development mode"
     r = requests.get(membership_full_url,params={"access_token":token})
     memberships = r.json()
     m_strings = "These are the current members of The Artifactory (from TidyHQ)"

@@ -1,8 +1,12 @@
-{"unrestricted_channels":["CXXXXX"],
+{"unrestricted_channels":["CXXXX],
  "app_token": "xapp-XXXX",
  "bot_token": "xoxb-XXXX",
+ "calendar_id": "XXXX@group.calendar.google.com",
  "reddit_id":"XXX",
  "reddit_secret": "XXX",
- "tidyhq_token": "XXX",
- "calendar_id": "XXXX@group.calendar.google.com",
- "urls":["https://XXX.YY","https://XXX.YY/abc]}
+ "tidyhq_token": "XXXXXX",
+ "urls":["https://XXX.YY","https://XXX.YY/abc],
+ "bot":{"dev":false,
+        "debug":false,
+        "slack_error_webhook":"",
+        "name":"queryBot"}}

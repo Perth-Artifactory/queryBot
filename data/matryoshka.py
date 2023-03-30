@@ -9,6 +9,9 @@ import logging
 
 from data import reddit
 
+with open("config.json","r") as f:
+    config = json.load(f)
+
 def download_page(pagedata):
     p = requests.get(pagedata["download_url"])
     pagedata["content"] = html.unescape(p.text)
@@ -37,8 +40,6 @@ def process_pages(url=None):
     if url:
         urls = [url]
     else:
-        with open("config.json","r") as f:
-            config = json.load(f)
         urls = config["urls"]
 
     out = {}
@@ -48,6 +49,10 @@ def process_pages(url=None):
     return out
 
 def gpt_summarise(pagedata):
+    if config["bot"]["dev"]:
+        pagedata["summary"] = "Page summary not grabbed because we're running in development mode"
+        logging.info(f'Not summaring {pagedata["title"]} in development mode')
+        return pagedata
     openai.api_key_path = './key'
     logging.info(f'initiating summary of {pagedata["title"]}')
     try:

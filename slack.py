@@ -21,6 +21,10 @@ if config["bot"]["slack_error_webhook"]:
     sh.setLevel(logging.ERROR)
     logging.getLogger('').addHandler(sh)
 
+# Warn about development mode
+if config["bot"]["dev"]:
+    logging.info("Running in development mode, some resource intensive tasks will be skipped")
+
 # This is going to prefetch some stuff so set up logging first
 import gpt
 
