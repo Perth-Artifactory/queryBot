@@ -4,3 +4,4 @@ __pycache__
 google.secret.json
 token.json
 babushka.json
+prompts.txt

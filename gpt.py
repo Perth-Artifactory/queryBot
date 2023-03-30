@@ -66,10 +66,24 @@ def respond(prompts):
             current_pages = []
         r_prompts.append(p)
 
-    messages=[{"role": "system", "content": "You are a helpful assistant tasked with drafting replies to questions from the public on behalf of the Perth Artifactory. You are receiving requests from a channel on the artifactory slack team and your name is QueryBot. If you are ever unsure of information, ask for clarification."},
-              {"role": "user", "content": data["bot primer"]},
-              {"role": "user", "content": data["workshop usage"]}]
-    messages = messages + current_pages + extras + r_prompts
+    try:
+        with open("prompts.txt","r") as f:
+            pro = f.readlines()[0]
+            pro = pro.split("\n")
+        sys = True
+        initial_prompts = []
+        for line in pro:
+            if sys:
+                initial_prompts.append({"role": "system", "content": line})
+                sys = False
+            else:
+                initial_prompts.append({"role": "user", "content": line})
+
+    except FileNotFoundError:
+        initial_prompts = [{"role": "system", "content": "You are a helpful assistant tasked with drafting replies and answering queries. You are receiving requests from a Slack channel"}]
+        logging.warn("System prompt not set in prompts.txt, using default")
+
+    messages = initial_prompts + current_pages + extras + r_prompts
 
     try:
         r = openai.ChatCompletion.create(

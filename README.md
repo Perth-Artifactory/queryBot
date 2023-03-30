@@ -43,6 +43,9 @@ Create an account and generate an API token.
      * `slack_error_webhook` - Sends logging data to a slack webhook
      * `name` - The name of the bot, not used currently.
 * Run `auth_google.py` to authenticate with google for upcoming events
+* `./rsc/prompts.txt.example` -> `prompts.txt`
+  * Add lines that should always be added to the bot. The first line is the system prompt and tells the bot what it is and what it's broadly expected to do. OpenAI has a [decent page](https://platform.openai.com/docs/guides/chat/instructing-chat-models) on system prompts.
+  
 ## Running
 
 `python slack.py`
