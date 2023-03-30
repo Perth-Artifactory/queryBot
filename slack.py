@@ -39,6 +39,7 @@ def tagged(body, say):
         # pull out info
         id = body["authorizations"][0]["user_id"]
         ts = body["event"]["ts"]
+        pprint(body)
         message = body["event"]["text"].replace(f'<@{id}>',"QueryBot")
 
         # send a stalling message to let users know we've received the request
@@ -49,14 +50,14 @@ def tagged(body, say):
         struct = [{"role": "user", "content": message}]
         if "thread_ts" in body["event"]:
             result = app.client.conversations_replies(
-                channel=config["channel"],
+                channel=body["event"]["channel"],
                 inclusive=True,
                 ts=body["event"]["thread_ts"])
             struct = structure_reply(bot_id=id,messages=result.data["messages"])
 
         # Replace message with ChatGPT response
         gpt_response = gpt.respond(prompts=struct)
-        app.client.chat_update(channel=config["channel"], ts=stalling_id, as_user = True, text = gpt_response)
+        app.client.chat_update(channel=body["event"]["channel"], ts=stalling_id, as_user = True, text = gpt_response)
     else:
         print(f'Tagged in a channel that wasn\'t whitelisted. ({body["event"]["channel"]})')
 
