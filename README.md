@@ -36,7 +36,7 @@ Create an account and generate an API token.
    * `reddit_secret` - As above
    * `tidyhq_token` - TidyHQ API token
    * `calendar_id` - The ID for the google calendar you want the bot to know about
-   * `urls` - Any web pages you want the bot to know about. Supports pages on `artifactory.org.au`, `wiki.artifactory.org.au`, and `reddit.com` the best.
+   * `urls` - Any web pages you want the bot to know about. Supports pages on `artifactory.org.au`, `wiki.artifactory.org.au`, `github.com`, and `reddit.com` the best.
    * bot
      * `dev [true|false]` - Skips some time/resource intensive data gathering
      * `debug [true|false]` - Outputs debugging data
@@ -67,7 +67,7 @@ Add the following to a message and the bot should get some info about that categ
 
 * `!calendar` - The next 20 events
 * `!slack` - Some basic information about public slack channels with over 30 people
-* `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our [website](https://artifactory.org.au)/[wiki](https://wiki.artifactory.org.au) and Reddit which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc). Because `!url` adds a url as part of the conversation primer (before anything said on Slack) you may need to specify that it was "the reddit post I sent you earlier" etc if you've used the command in a thread.
+* `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our [website](https://artifactory.org.au)/[wiki](https://wiki.artifactory.org.au), Github and Reddit which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc). Because `!url` adds a url as part of the conversation primer (before anything said on Slack) you may need to specify that it was "the reddit post I sent you earlier" etc if you've used the command in a thread.
 * `!nopages` - To exclude some pages from our website that are excluded from the bot by default.
 * `!tidyhq` - Some basic information for current Artifactory members.
 
