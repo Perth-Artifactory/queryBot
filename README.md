@@ -23,7 +23,7 @@ Create an account and generate an API token.
 * Create a Slack application using `./rsc/slack.manifest.json`
 * Add an app level token with `connections:write` and save the app token
 * Install the app to your workspace and save the bot token
-* Add the :chat-gpt: emoji from `./rsc/chat-gpt.png` as a custom emoji
+* Add the :chat-gpt: emoji from `./rsc/chat-gpt.png` or `./rsc/chat-gpt_animated.png` as a custom emoji
 
 ## Configuration
 
