@@ -32,10 +32,10 @@ Create an account and generate an API token.
    * `unrestricted_channels` - A list of slack channel IDs for unrestricted channels. Remember that access to these channels includes an ability to cost you money. 
    * `app_token` - Your slack app token 
    * `bot_token` - Your slack bot token
-   * `reddit_id` - Create a [reddit personal use script](https://www.reddit.com/prefs/apps)
-   * `reddit_secret` - As above
-   * `tidyhq_token` - TidyHQ API token
-   * `calendar_id` - The ID for the google calendar you want the bot to know about
+   * `reddit_id` (optional) - Create a [reddit personal use script](https://www.reddit.com/prefs/apps)
+   * `reddit_secret` (optional) - As above
+   * `tidyhq_token` (optional) - TidyHQ API token
+   * `calendar_id` (optional) - The ID for the google calendar you want the bot to know about
    * `urls` - Any web pages you want the bot to know about. Supports pages on `artifactory.org.au`, `wiki.artifactory.org.au`, `github.com`, and `reddit.com` the best.
    * bot
      * `dev [true|false]` - Skips some time/resource intensive data gathering
@@ -72,12 +72,12 @@ Send a message to this channel that tags @queryBot to begin a conversation. Your
 
 Add the following to a message and the bot should get some info about that category to help inform its answer.
 
-* `!calendar` - The next 20 events
+* `!calendar` - The next 20 events if Google Calendar is configured.
 * `!slackpopular` - Some basic information about public slack channels with over 30 people
 * `!slackmsg` - The last 30 messages in any channels mentioned during the conversation **provided that the bot is in the mentioned channel**
-* `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our [website](https://artifactory.org.au)/[wiki](https://wiki.artifactory.org.au), Github and Reddit which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc). Because `!url` adds a url as part of the conversation primer (before anything said on Slack) you may need to specify that it was "the reddit post I sent you earlier" etc if you've used the command in a thread.
+* `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our [website](https://artifactory.org.au)/[wiki](https://wiki.artifactory.org.au), Github and Reddit which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc). Because `!url` adds a url as part of the conversation primer (before anything said on Slack) you may need to specify that it was "the reddit post I sent you earlier" etc if you've used the command in a thread. Reddit support requires a reddit API to be configured.
 * `!nopages` - To exclude some pages from our website that are included by default.
-* `!tidyhq` - Some basic information for current Artifactory members.
+* `!tidyhq` - Some basic information for current Artifactory members if a TidyHQ token is present. Should be fairly organisation agnostic.
 
 ### Elsewhere on Slack
 

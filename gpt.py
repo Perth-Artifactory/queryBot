@@ -15,30 +15,42 @@ with open("config.json","r") as f:
 # Create optional information flags
 optional = {}
 
-# prefetch internet pages
+# Prefetch internet pages and set up prompted URLs.
+# This doesn't require any special permissions so isn't optional
 logging.info("Prefetching internet pages")
 from data import matryoshka
 with open("babushka.json","r") as f:
     webpages = json.load(f)
     pages = matryoshka.format_pages(webpages)
+optional["url"] = matryoshka.single_page
 
-# prefetch slack channels on launch and add to optionals
+# Prefetch TidyHQ information as it takes some time to retrieve
+# Will not be run if tidyhq_token isn't set
+
+if config.get("tidyhq_token"):
+    from data import tidyhq
+    logging.info("Prefetching TidyHQ data")
+    tidy_data = tidyhq.format_tidyhq()
+    def tidy():
+        return tidy_data
+    optional["tidyhq"] = tidy
+
+# Information on popular Slack channels and access to some recent public messages
+# This doesn't require any special permissions beyond slack scopes so isn't optional
+
 from data import workspace
 logging.info("Prefetching Slack channel info")
 optional["slackpopular"] = workspace.format_channels
+optional["slackmsg"] = workspace.find_channels
 
-from data import tidyhq
-logging.info("Prefetching TidyHQ data")
-tidy_data = tidyhq.format_tidyhq()
-def tidy():
-    return tidy_data
-optional["tidyhq"] = tidy
+# Information from Google Calendar
+# Will not be run if calendar_id isn't set
+
+if config.get("calendar_id"):
+    optional["calendar"] = events.format_events
 
 def respond(prompts):
-    # Add command time optionals
-    optional["calendar"] = events.format_events
-    optional["url"] = matryoshka.single_page
-    optional["slackmsg"] = workspace.find_channels
+
 
     # Insert optionals
     extras = []
