@@ -1,16 +1,17 @@
-import openai
 import json
-from pprint import pformat
-import re
 import logging
+import re
 from datetime import datetime
+from pprint import pformat
+
+import openai
 
 from data import events
 
 openai.api_key_path = './key'
 
 with open("config.json","r") as f:
-    config = json.load(f)
+    config: dict = json.load(f)
 
 # Create optional information flags
 optional = {}
@@ -19,8 +20,9 @@ optional = {}
 # This doesn't require any special permissions so isn't optional
 logging.info("Prefetching internet pages")
 from data import matryoshka
+
 with open("babushka.json","r") as f:
-    webpages = json.load(f)
+    webpages: dict = json.load(f)
     pages = matryoshka.format_pages(webpages)
 optional["url"] = matryoshka.single_page
 
@@ -31,7 +33,7 @@ if config.get("tidyhq_token"):
     from data import tidyhq
     logging.info("Prefetching TidyHQ data")
     tidy_data = tidyhq.format_tidyhq()
-    def tidy():
+    def tidy() -> str:
         return tidy_data
     optional["tidyhq"] = tidy
 
@@ -39,6 +41,7 @@ if config.get("tidyhq_token"):
 # This doesn't require any special permissions beyond slack scopes so isn't optional
 
 from data import workspace
+
 logging.info("Prefetching Slack channel info")
 optional["slackpopular"] = workspace.format_channels
 optional["slackmsg"] = workspace.find_channels
@@ -49,19 +52,20 @@ optional["slackmsg"] = workspace.find_channels
 if config.get("calendar_id"):
     optional["calendar"] = events.format_events
 
-def respond(prompts):
-
-
+def respond(prompts: dict) -> str:
+    """Accepts a list of prompts and returns a response from GPT-3
+    Prompts are filtered for commands which are then executed and the results added before the accepted prompts."""
     # Insert optionals
     extras = []
     r_prompts = []
     used = []
     current_pages = pages
     for p in prompts:
-        # Only listen to commands if they're issued by users
+        # Only listen to commands if they're from Slack
         if p["role"] == "user":
             for option in optional:
                 command_search = re.findall(f'!{option}-([^\s]+)', p["content"])
+                # Commands with - should be handled first in case a command supports both
                 if command_search:
                     p["content"] = re.sub(f'!{option}-[^\s]+', "", p["content"])
                     extras.append({"role": "user", "content": optional[option](command_search[0])})
@@ -69,6 +73,7 @@ def respond(prompts):
                 elif "!"+option in p["content"]:
                     logging.debug(f'Found: {option}')
                     p["content"] = p["content"].replace("!"+option, "")
+                    # Don't add the same command twice
                     if option not in used:
                         content = optional[option](p["content"])
                         logging.debug(content)
@@ -89,7 +94,7 @@ def respond(prompts):
 
     try:
         with open("prompts.txt","r") as f:
-            pro = f.readlines()[0]
+            pro: list = f.readlines()[0]
             pro = pro.split("\n")
         sys = True
         initial_prompts = []

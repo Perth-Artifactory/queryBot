@@ -1,13 +1,12 @@
+import json
+import logging
+
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
-from pprint import pprint
-import json
-
-import logging
 from slack_logger import SlackFormatter, SlackHandler
 
 with open("config.json","r") as f:
-    config = json.load(f)
+    config: dict = json.load(f)
 
 # Set up logging
 if config["bot"]["debug"]:
@@ -28,14 +27,16 @@ if config["bot"]["dev"]:
 # This is going to prefetch some stuff so set up logging first
 import gpt
 
-def structure_reply(bot_id,messages,ignore_mention=False):
+def structure_reply(bot_id: str,messages: list,ignore_mention: bool = False) -> list[dict]:
+    """Takes a list of Slack messages and returns a list formatted for GPT.
+    Also replaces mentions of the bot with the bot's name."""
     conversation = []
     for message in messages:
         # deslackify
         mentioned = ignore_mention
         if bot_id in message["text"]:
             mentioned = True
-        message["text"] = message["text"].replace(f'<@{bot_id}>',config["bot"]["name"])
+        message["text"]: str = message["text"].replace(f'<@{bot_id}>',config["bot"]["name"])
 
         # Only add messages that are either added by the bot or mention the bot directly.
         if message["user"] == bot_id:
@@ -45,7 +46,8 @@ def structure_reply(bot_id,messages,ignore_mention=False):
             conversation.append({"role": "user", "content": message["text"]})
     return conversation
 
-def clean_messages(messages):
+def clean_messages(messages: list[dict]) -> list[dict]:
+    """Takes a list of Slack messages and removes any restricted commands from them."""
     clean = []
     for message in messages:
         for command in config["bot"]["restricted_commands"]:
@@ -55,19 +57,20 @@ def clean_messages(messages):
 
 # matchers
 
-def gpt_emoji(event) -> bool:
+def gpt_emoji(event: dict) -> bool:
     return event.get("reaction") == "chat-gpt"
 
-def approval_emoji(event) -> bool:
+def approval_emoji(event: dict) -> bool:
     return event.get("reaction") in ["+1","-1"]
 
-def authed(event):
+def authed(event: dict) -> bool:
+    """Checks if the user is in a unrestricted channel"""
     control_channel_members = []
     for channel in config["unrestricted_channels"]:
         control_channel_members += app.client.conversations_members(channel=channel).data["members"]
     return event.get("user") in control_channel_members
 
-def unrestricted_channel(event):
+def unrestricted_channel(event: dict) -> bool:
     return event.get("channel") in config["unrestricted_channels"]
 
 app = App(token=config["bot_token"])
@@ -138,7 +141,7 @@ def emoji_prompt(event, say, body):
     )
 
 @app.event(event="reaction_added", matchers=[approval_emoji, authed])
-def killswitch(event, say, body, logger):
+def killswitch(event, body, logger):
     logger.info(body)
     message_ts = event["item"]["ts"]
     id = body["authorizations"][0]["user_id"]
