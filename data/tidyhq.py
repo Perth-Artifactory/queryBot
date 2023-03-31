@@ -16,17 +16,22 @@ membership_full_url = "https://api.tidyhq.com/v1//memberships"
 contact_membership_url = "https://api.tidyhq.com/v1/contacts/{}/memberships"
 
 def get_contact(id: str) -> dict:
+    """Returns a dict containing the contact data for the TidyHQ contact with the given ID
+    Currently breaks if the contact does not exist"""
     r = requests.get(contacts_url+"/"+str(id),params={"access_token":token})
     member = r.json()
     return member
 
 def get_groups(contact: dict) -> list:
+    """Returns a list of group IDs that the contact is in"""
     g = []
     for group in contact["groups"]:
         g.append(group["id"])
     return g
 
 def get_memberships(id: Union[str, int], raw: bool = False) -> list[dict]:
+    """Returns a list of membership dicts for the contact with the given ID
+    Pass raw=True to return the raw data or raw=False to return a list of membership_level_ids"""
     r = requests.get(contact_membership_url.format(id),params={"access_token":token})
     memberships = r.json()
     if raw == True:
@@ -37,6 +42,8 @@ def get_memberships(id: Union[str, int], raw: bool = False) -> list[dict]:
     return m
 
 def time_since_membership(memberships: list[dict]) -> int:
+    """Returns the number of days since the most recent membership expired
+    Negative numbers indicate that the membership is still active"""
     newest = 60000
     for membership in memberships:
         try:
@@ -52,10 +59,11 @@ def time_since_membership(memberships: list[dict]) -> int:
     return newest
 
 def format_tidyhq(message: Optional[str] = None) -> str:
-    logging.info("Getting TidyHQ data")
+    """Returns a string containing basic information about TidyHQ contacts that hold active memberships formatted for feeding into GPT"""
     if config["bot"]["dev"]:
-        logging.info("Data not grabbed in development mode")
+        logging.info("TidyHQ data requested but not grabbed in development mode")
         return "Data not grabbed because we're running in development mode"
+    logging.info("Getting TidyHQ data")
     r = requests.get(membership_full_url,params={"access_token":token})
     memberships = r.json()
     m_strings = f'These are the current members of {config["bot"]["org_name"]} (from TidyHQ)'
@@ -80,7 +88,6 @@ def format_tidyhq(message: Optional[str] = None) -> str:
                 if type(field["value"]) == str:
                     c_data[field["title"]] = field["value"]
                 elif type(field["value"]) == list and field["value"]:
-                    #pprint(field)
                     c_data[field["title"]] = field["value"][0]["title"]
 
             s = ""

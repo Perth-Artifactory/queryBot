@@ -53,17 +53,19 @@ if config.get("calendar_id"):
     optional["calendar"] = events.format_events
 
 def respond(prompts: dict) -> str:
-
+    """Accepts a list of prompts and returns a response from GPT-3
+    Prompts are filtered for commands which are then executed and the results added before the accepted prompts."""
     # Insert optionals
     extras = []
     r_prompts = []
     used = []
     current_pages = pages
     for p in prompts:
-        # Only listen to commands if they're issued by users
+        # Only listen to commands if they're from Slack
         if p["role"] == "user":
             for option in optional:
                 command_search = re.findall(f'!{option}-([^\s]+)', p["content"])
+                # Commands with - should be handled first in case a command supports both
                 if command_search:
                     p["content"] = re.sub(f'!{option}-[^\s]+', "", p["content"])
                     extras.append({"role": "user", "content": optional[option](command_search[0])})
@@ -71,6 +73,7 @@ def respond(prompts: dict) -> str:
                 elif "!"+option in p["content"]:
                     logging.debug(f'Found: {option}')
                     p["content"] = p["content"].replace("!"+option, "")
+                    # Don't add the same command twice
                     if option not in used:
                         content = optional[option](p["content"])
                         logging.debug(content)

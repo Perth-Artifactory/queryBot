@@ -28,6 +28,8 @@ if config["bot"]["dev"]:
 import gpt
 
 def structure_reply(bot_id: str,messages: list,ignore_mention: bool = False) -> list[dict]:
+    """Takes a list of Slack messages and returns a list formatted for GPT.
+    Also replaces mentions of the bot with the bot's name."""
     conversation = []
     for message in messages:
         # deslackify
@@ -45,6 +47,7 @@ def structure_reply(bot_id: str,messages: list,ignore_mention: bool = False) -> 
     return conversation
 
 def clean_messages(messages: list[dict]) -> list[dict]:
+    """Takes a list of Slack messages and removes any restricted commands from them."""
     clean = []
     for message in messages:
         for command in config["bot"]["restricted_commands"]:
@@ -61,6 +64,7 @@ def approval_emoji(event: dict) -> bool:
     return event.get("reaction") in ["+1","-1"]
 
 def authed(event: dict) -> bool:
+    """Checks if the user is in a unrestricted channel"""
     control_channel_members = []
     for channel in config["unrestricted_channels"]:
         control_channel_members += app.client.conversations_members(channel=channel).data["members"]
@@ -137,7 +141,7 @@ def emoji_prompt(event, say, body):
     )
 
 @app.event(event="reaction_added", matchers=[approval_emoji, authed])
-def killswitch(event, say, body, logger):
+def killswitch(event, body, logger):
     logger.info(body)
     message_ts = event["item"]["ts"]
     id = body["authorizations"][0]["user_id"]

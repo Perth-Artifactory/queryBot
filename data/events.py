@@ -11,7 +11,12 @@ from googleapiclient.errors import HttpError
 with open("config.json","r") as f:
     config: dict = json.load(f)
 
-def pull_events() -> list:
+def pull_events() -> list[dict]:
+    """Pulls events from the Google Calendar API and returns them as a list of events represented as dicts"""
+
+    # The file token.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time from auth_google.py
     creds = None
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/calendar.readonly'])
@@ -39,6 +44,8 @@ def pull_events() -> list:
         return []
 
 def format_events(message: Optional[dict[list]] = None) -> str:
+    """Formats a list of Google Calendar events into a string to be sent to OpenAI"""
+
     s = f'The time right now is {datetime.now()}. These are the next 20 events:'
     descriptions = {}
     for event in pull_events():
@@ -48,6 +55,7 @@ def format_events(message: Optional[dict[list]] = None) -> str:
         start_f = "%H:%M on %A %d %B"
         end_f = "%H:%M"
         s += f'\n{event["summary"]} starts at {start_dt.strftime(start_f)} until {end_dt.strftime(end_f)}'
+        # Some events repeat, we only want to add the description once to save tokens
         if event["summary"] not in descriptions:
             descriptions[event["summary"]] = event["description"]
     s += "\nThese are a the descriptions for the events listed above."
