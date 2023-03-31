@@ -2,10 +2,10 @@
 
 This bot exposes `gpt-3.5-turbo` as a Slack service. It is preprimed to assist with Artifactory related queries and has access to some specific data such as:
 
-* Our website and wiki
-* Specific URLs (With extra support for Reddit)
-^ Our event calendar
-* Slack channel metadata
+* The Artifactory website and wiki
+* Specific URLs (With extra support for Reddit and GitHub)
+* Google Calendars
+* Slack channel metadata and recent public messages
 * TidyHQ contact info
 
 ## Installation
