@@ -100,7 +100,7 @@ def respond(prompts):
             else:
                 initial_prompts.append({"role": "user", "content": line.format(**template_variables)})
 
-    except FileNotFoundError:
+    except (FileNotFoundError, IndexError):
         initial_prompts = [{"role": "system", "content": "You are {bot_name} a helpful assistant tasked with drafting replies and answering queries on behalf of {org_name}. You are receiving requests from a Slack channel".format(**template_variables)}]
         logging.warn("System prompt not set in prompts.txt, using default")
 
