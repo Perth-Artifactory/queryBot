@@ -4,6 +4,7 @@ This bot exposes `gpt-3.5-turbo` as a Slack service. It is preprimed to assist w
 
 * The Artifactory website and wiki
 * Specific URLs (With extra support for Reddit and GitHub)
+* YouTube Videos
 * Google Calendars
 * Slack channel metadata and recent public messages
 * TidyHQ contact info
@@ -45,7 +46,7 @@ Create an account and generate an API token.
    * `reddit_secret` (optional) - As above
    * `tidyhq_token` (optional) - TidyHQ API token
    * `calendar_id` (optional) - The ID for the google calendar you want the bot to know about
-   * `urls` - Any web pages you want the bot to know about. Supports pages on `artifactory.org.au`, `wiki.artifactory.org.au`, `github.com`, and `reddit.com` the best.
+   * `urls` - Any web pages you want the bot to know about. See description of `!url` below for details on sites with specific processors.
    * bot
      * `dev [true|false]` - Skips some time/resource intensive data gathering
      * `debug [true|false]` - Outputs debugging data
@@ -84,7 +85,7 @@ Add the following to a message and the bot should get some info about that categ
 * `!calendar` - The next 20 events if Google Calendar is configured.
 * `!slackpopular` - Some basic information about public slack channels with over 30 people
 * `!slackmsg` - The last 30 messages in any channels mentioned during the conversation **provided that the bot is in the mentioned channel**
-* `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our [website](https://artifactory.org.au)/[wiki](https://wiki.artifactory.org.au), Github and Reddit which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc). Because `!url` adds a url as part of the conversation primer (before anything said on Slack) you may need to specify that it was "the reddit post I sent you earlier" etc if you've used the command in a thread. Reddit support requires a reddit API to be configured.
+* `!url-https://your.url` - Information from a custom provided URL. It won't handle big pages or pages with lots of javascript etc. There is some custom logic specifically for our [website](https://artifactory.org.au)/[wiki](https://wiki.artifactory.org.au), Github, Reddit (with credentials set), and YouTube which allow it to download a "cleaner" version of the page. If you're using a url that's not on those domains you may have more success if you use a "raw" version of the page (like the source view on a wiki etc). Because `!url` adds a url as part of the conversation primer (before anything said on Slack) you may need to specify that it was "the reddit post I sent you earlier" etc if you've used the command in a thread. 
 * `!nopages` - To exclude some pages from our website that are included by default.
 * `!tidyhq` - Some basic information for current Artifactory members if a TidyHQ token is present. Should be fairly organisation agnostic.
 

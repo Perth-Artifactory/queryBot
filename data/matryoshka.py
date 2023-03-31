@@ -8,7 +8,7 @@ from typing import Optional
 import openai
 import requests
 
-from data import reddit
+from data import reddit, youtube
 
 with open("config.json","r") as f:
     config: dict = json.load(f)
@@ -98,7 +98,7 @@ def single_page(url: str) -> str:
     for page in pages:
         p = pages[page]
     if type(p) == str:
-        return {"role": "user", "content": p}
+        return p
     return f'There is a webpage titled {p["title"]} at {p["url"]} It contains:\n{p["content"]}'
 
 url_conversions = [{"search":"wiki.artifactory.org.au/en/",
@@ -117,6 +117,10 @@ url_conversions = [{"search":"wiki.artifactory.org.au/en/",
                    "replace":[("github.com/","raw.githubusercontent.com/"),("/blob","")],
                    "suffix":"",
                    "functions":[download_page]},
+                  {"search":"youtube.com",
+                   "replace":[],
+                   "suffix":"",
+                   "functions":[youtube.format_video]},
                    ]
 
 # Load cached website data/summaries

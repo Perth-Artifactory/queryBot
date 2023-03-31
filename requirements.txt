@@ -5,3 +5,5 @@ google-auth-httplib2
 google-auth-oauthlib
 praw
 slack_logger
+beautifulsoup4
+youtube_transcript_api
