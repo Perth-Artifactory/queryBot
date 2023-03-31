@@ -35,7 +35,7 @@ def structure_reply(bot_id,messages,ignore_mention=False):
         mentioned = ignore_mention
         if bot_id in message["text"]:
             mentioned = True
-        message["text"] = message["text"].replace(f'<@{bot_id}>',"QueryBot")
+        message["text"] = message["text"].replace(f'<@{bot_id}>',config["bot"]["name"])
 
         # Only add messages that are either added by the bot or mention the bot directly.
         if message["user"] == bot_id:
@@ -77,7 +77,7 @@ def tagged(body, event, say):
     # pull out info
     id = body["authorizations"][0]["user_id"]
     ts = event.get("ts")
-    message = event.get("text").replace(f'<@{id}>',"QueryBot")
+    message = event.get("text").replace(f'<@{id}>',config["bot"]["name"])
     # send a stalling message to let users know we've received the request
     r = say(":spinthinking:",thread_ts=ts)
     stalling_id = r.data["message"]["ts"]

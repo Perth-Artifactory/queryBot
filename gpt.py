@@ -3,10 +3,14 @@ import json
 from pprint import pformat
 import re
 import logging
+from datetime import datetime
 
 from data import events
 
 openai.api_key_path = './key'
+
+with open("config.json","r") as f:
+    config = json.load(f)
 
 # Create optional information flags
 optional = {}
@@ -66,6 +70,11 @@ def respond(prompts):
                 current_pages = []
         r_prompts.append(p)
 
+    template_variables = {"bot_name":config["bot"]["name"],
+                          "org_name":config["bot"]["org_name"],
+                          "date":datetime.now().strftime("%Y-%m-%d"),
+                          "time":datetime.now().strftime("%H:%M")}
+
     try:
         with open("prompts.txt","r") as f:
             pro = f.readlines()[0]
@@ -74,13 +83,13 @@ def respond(prompts):
         initial_prompts = []
         for line in pro:
             if sys:
-                initial_prompts.append({"role": "system", "content": line})
+                initial_prompts.append({"role": "system", "content": line.format(**template_variables)})
                 sys = False
             else:
-                initial_prompts.append({"role": "user", "content": line})
+                initial_prompts.append({"role": "user", "content": line.format(**template_variables)})
 
     except FileNotFoundError:
-        initial_prompts = [{"role": "system", "content": "You are a helpful assistant tasked with drafting replies and answering queries. You are receiving requests from a Slack channel"}]
+        initial_prompts = [{"role": "system", "content": "You are {bot_name} a helpful assistant tasked with drafting replies and answering queries on behalf of {org_name}. You are receiving requests from a Slack channel".format(**template_variables)}]
         logging.warn("System prompt not set in prompts.txt, using default")
 
     messages = initial_prompts + current_pages + extras + r_prompts

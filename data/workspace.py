@@ -80,7 +80,7 @@ def get_single_channel(channel):
 def format_channel(channel):
     messages = get_single_channel(channel)
     if not messages:
-        return f'You can\'t access detailed information regarding #{channel} because you are not in that channel. You could ask me to type "/invite @queryBot" from #{channel} to get access.'
+        return f'You can\'t access detailed information regarding #{channel} because you are not in that channel. You could ask me to type "/invite @{config["bot"]["name"]}" from #{channel} to get access.'
     s = f'Last {len(messages)} messages from #{channel}'
     for message in messages:
         s += f'\n{message["time"].strftime("%Y-%m-%d %H:%M")} {message["name"]["username"]} - {message["text"]}'

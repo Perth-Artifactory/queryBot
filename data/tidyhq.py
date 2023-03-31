@@ -56,7 +56,7 @@ def format_tidyhq(message=None):
         return "Data not grabbed because we're running in development mode"
     r = requests.get(membership_full_url,params={"access_token":token})
     memberships = r.json()
-    m_strings = "These are the current members of The Artifactory (from TidyHQ)"
+    m_strings = f'These are the current members of {config["bot"]["org_name"]} (from TidyHQ)'
     for membership in memberships:
         if membership["state"] != "expired":
             contact = get_contact(membership["contact_id"])
@@ -89,7 +89,7 @@ def format_tidyhq(message=None):
             s += f'Phone: {contact["phone_number"]} emergency contact: {contact["emergency_contact_person"]} ({contact["emergency_contact_number"]}) '
 
             # Join date, not used due to token limit
-            #s += f'They first joined the Artifactory {start_date.strftime("%Y-%m-%d")} '
+            #s += f'They first joined {config["bot"]["org_name"]} {start_date.strftime("%Y-%m-%d")} '
 
             # Locker assignment
             if "Locker assignment" in c_data:
