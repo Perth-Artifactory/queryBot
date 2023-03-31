@@ -1,8 +1,9 @@
 import json
-from slack_bolt import App
-from pprint import pprint
 import logging
 import sys
+from pprint import pprint
+
+from slack_bolt import App
 
 from data import workspace
 
