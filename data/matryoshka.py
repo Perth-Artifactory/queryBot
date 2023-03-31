@@ -66,7 +66,7 @@ def gpt_summarise(pagedata):
         r = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a helpful worker being run by the Perth Artifactory. You are tasked with summarising the content of web pages in a format that can be used by other iterations of GPT."},
+                {"role": "system", "content": f'You are a helpful worker being run by {config["bot"]["org_name"]}. You are tasked with summarising the content of web pages in a format that can be used by other iterations of GPT.'},
                 {"role": "user", "content": f'This is the contents of the webpage "{pagedata["title"]}"\n{pagedata["content"]}'}
                 ]
             )

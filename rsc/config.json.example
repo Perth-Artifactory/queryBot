@@ -6,8 +6,9 @@
  "reddit_secret": "XXX",
  "tidyhq_token": "XXXXXX",
  "urls":["https://XXX.YY","https://XXX.YY/abc],
- "bot":{"dev":false,
-        "debug":false,
+ "bot":{"dev":true,
+        "debug":true,
         "slack_error_webhook":"",
         "name":"queryBot",
+        "org_name": "ACME Inc",
         "restricted_commands":["tidyhq"]}}

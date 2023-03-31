@@ -41,11 +41,17 @@ Create an account and generate an API token.
      * `dev [true|false]` - Skips some time/resource intensive data gathering
      * `debug [true|false]` - Outputs debugging data
      * `slack_error_webhook` - Sends logging data to a slack webhook
-     * `name` - The name of the bot, not used currently.
+     * `name` - The name of the bot in Slack
+     * `org_name` - Your organisation name (used in various prompts etc)
      * `restricted_commands` - Commands that should only be triggered by @bot tags. (and thus only in `unrestricted_channels`)
 * Run `auth_google.py` to authenticate with google for upcoming events
 * `./rsc/prompts.txt.example` -> `prompts.txt`
   * Add lines that should always be added to the bot. The first line is the system prompt and tells the bot what it is and what it's broadly expected to do. OpenAI has a [decent page](https://platform.openai.com/docs/guides/chat/instructing-chat-models) on system prompts.
+  * The following templates can be used: (eg. "You are {bot_name} run by {org_name}. It is {date} {time}.")
+    * `{bot_name}`
+    * `{org_name}`
+    * `{date}`
+    * `{time}`
   
 ## Running
 
