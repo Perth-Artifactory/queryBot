@@ -1,6 +1,6 @@
-import os
-import json
 import datetime
+import json
+import os
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -9,9 +9,9 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 with open("config.json","r") as f:
-    config = json.load(f)
+    config: dict = json.load(f)
 
-def main():
+def main() -> None:
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """

@@ -3,6 +3,7 @@ import html
 import json
 import logging
 import re
+from typing import Optional
 
 import openai
 import requests
@@ -10,9 +11,9 @@ import requests
 from data import reddit
 
 with open("config.json","r") as f:
-    config = json.load(f)
+    config: dict = json.load(f)
 
-def download_page(pagedata):
+def download_page(pagedata: dict) -> dict:
     p = requests.get(pagedata["download_url"])
     pagedata["content"] = html.unescape(p.text)
     titles = re.findall("<title[^>]*>(.*)<\/title>", p.text)
@@ -22,11 +23,11 @@ def download_page(pagedata):
         pagedata["title"] = "Webpage"
     return pagedata
 
-def mrkdwn(pagedata):
+def mrkdwn(pagedata: dict) -> dict:
     pagedata["title"] = re.findall("\ntitle: '*?(.*)'*?", pagedata["content"])[0].replace("'","")
     return pagedata
 
-def process_page(url):
+def process_page(url: str) -> dict:
     if url[0] == "<" and url[-1] == ">":
         url = url[1:-1]
     for block in url_conversions:
@@ -43,7 +44,7 @@ def process_page(url):
     i = {"url":url,"download_url":url,"title":"Webpage"}
     return download_page(i)
 
-def process_pages(url=None):
+def process_pages(url: Optional[list] = None) -> dict:
     if url:
         urls = [url]
     else:
@@ -55,7 +56,7 @@ def process_pages(url=None):
         out[hashlib.md5(url.encode()).hexdigest()] = process_page(url)
     return out
 
-def gpt_summarise(pagedata):
+def gpt_summarise(pagedata: dict) -> dict:
     if config["bot"]["dev"]:
         pagedata["summary"] = "Page summary not grabbed because we're running in development mode"
         logging.info(f'Not summaring {pagedata["title"]} in development mode')
@@ -76,14 +77,14 @@ def gpt_summarise(pagedata):
     pagedata["summary"] = r["choices"][0]["message"]["content"]
     return pagedata
 
-def format_pages(pages):
+def format_pages(pages: dict) -> list[dict]:
     prompts = []
     for k in pages:
         pagedata = pages[k]
         prompts.append({"role": "user", "content": f'There is a webpage titled {pagedata["title"]} at {pagedata["url"]} This is a summary of the page written by a version of GPT:\n{pagedata["summary"]}'})
     return prompts
 
-def single_page(url):
+def single_page(url: str) -> str:
     if url[0] == "<" and url[-1] == ">":
         url = url[1:-1]
     pages = process_pages(url=url)
@@ -115,7 +116,7 @@ data_new = process_pages()
 try:
     with open("babushka.json","r") as f:
         try:
-            data_old = json.load(f)
+            data_old: dict = json.load(f)
         except:
             data_old = {}
 except FileNotFoundError:

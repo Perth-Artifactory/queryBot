@@ -2,15 +2,16 @@ import json
 import logging
 import os.path
 from datetime import datetime
+from typing import Optional
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 with open("config.json","r") as f:
-    config = json.load(f)
+    config: dict = json.load(f)
 
-def pull_events():
+def pull_events() -> list:
     creds = None
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/calendar.readonly'])
@@ -37,7 +38,7 @@ def pull_events():
     except HttpError as e:
         return []
 
-def format_events(message=None):
+def format_events(message: Optional[dict[list]] = None) -> str:
     s = f'The time right now is {datetime.now()}. These are the next 20 events:'
     descriptions = {}
     for event in pull_events():

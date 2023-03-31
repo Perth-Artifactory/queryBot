@@ -2,6 +2,7 @@ import json
 import logging
 import re
 from datetime import datetime
+from typing import Optional
 
 import slack_sdk
 from slack_bolt import App
@@ -11,21 +12,21 @@ with open("config.json","r") as f:
     
 app = App(token=config["bot_token"])
 
-def find_channel_id(name):
+def find_channel_id(name: str) -> Optional[str]:
     name = name.replace("#","")
     for result in app.client.conversations_list(exclude_archived=True,types="public_channel"):
         for channel in result["channels"]:
             if channel["name"] == name:
                 return channel["id"]
             
-def get_user_info(id):
+def get_user_info(id: str) -> dict:
     u = app.client.users_profile_get(user=id).data["profile"]
     if not u.get("display_name_normalized"):
         u["display_name_normalized"] = u.get("first_name")
     return {"username":u.get("display_name_normalized"),
             "real_name":u.get("real_name_normalized")}
 
-def get_channels(min_size=30):
+def get_channels(min_size: Optional[int] = 30) -> list[dict]:
     channels = []
     for channel in app.client.conversations_list(exclude_archived=True).data["channels"]:
         if not channel["is_archived"] and channel["is_channel"] and not channel["is_private"] and channel["num_members"] > min_size:
@@ -33,7 +34,7 @@ def get_channels(min_size=30):
     logging.info(f'Retrieved {len(channels)} channels')
     return channels
 
-def format_channels(channel=None,message=None):
+def format_channels(channel: Optional[str] = None,message: Optional[str] = None) -> str:
     if channel:
         return format_channel(channel)
     channels = get_channels()
@@ -46,7 +47,7 @@ def format_channels(channel=None,message=None):
         s += f'\nChannel description: {desc}'
     return s
 
-def get_single_channel(channel):
+def get_single_channel(channel: str) -> list[dict]:
     logging.info(f'Getting last 30 messages from #{channel}')
     clean_messages = []
     ids = {}
@@ -77,7 +78,7 @@ def get_single_channel(channel):
     logging.debug(f'Got {len(clean_messages)} messages from #{channel}')
     return clean_messages
 
-def format_channel(channel):
+def format_channel(channel: str) -> str:
     messages = get_single_channel(channel)
     if not messages:
         return f'You can\'t access detailed information regarding #{channel} because you are not in that channel. You could ask me to type "/invite @{config["bot"]["name"]}" from #{channel} to get access.'
@@ -86,7 +87,7 @@ def format_channel(channel):
         s += f'\n{message["time"].strftime("%Y-%m-%d %H:%M")} {message["name"]["username"]} - {message["text"]}'
     return s
 
-def find_channels(message=None):
+def find_channels(message: Optional[str] = None) -> str:
     s = ""
     for channel in re.findall('<#C[A-Z0-9]*\|([^>]*)>',message):
         s += "\n---"

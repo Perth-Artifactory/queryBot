@@ -11,7 +11,7 @@ from data import events
 openai.api_key_path = './key'
 
 with open("config.json","r") as f:
-    config = json.load(f)
+    config: dict = json.load(f)
 
 # Create optional information flags
 optional = {}
@@ -22,7 +22,7 @@ logging.info("Prefetching internet pages")
 from data import matryoshka
 
 with open("babushka.json","r") as f:
-    webpages = json.load(f)
+    webpages: dict = json.load(f)
     pages = matryoshka.format_pages(webpages)
 optional["url"] = matryoshka.single_page
 
@@ -33,7 +33,7 @@ if config.get("tidyhq_token"):
     from data import tidyhq
     logging.info("Prefetching TidyHQ data")
     tidy_data = tidyhq.format_tidyhq()
-    def tidy():
+    def tidy() -> str:
         return tidy_data
     optional["tidyhq"] = tidy
 
@@ -52,8 +52,7 @@ optional["slackmsg"] = workspace.find_channels
 if config.get("calendar_id"):
     optional["calendar"] = events.format_events
 
-def respond(prompts):
-
+def respond(prompts: dict) -> str:
 
     # Insert optionals
     extras = []
@@ -92,7 +91,7 @@ def respond(prompts):
 
     try:
         with open("prompts.txt","r") as f:
-            pro = f.readlines()[0]
+            pro: list = f.readlines()[0]
             pro = pro.split("\n")
         sys = True
         initial_prompts = []

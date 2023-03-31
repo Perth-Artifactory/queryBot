@@ -2,11 +2,12 @@ import json
 import logging
 from datetime import datetime
 from pprint import pprint
+from typing import Optional, Union
 
 import requests
 
 with open("config.json","r") as f:
-    config = json.load(f)
+    config: dict = json.load(f)
 
 token = config["tidyhq_token"]
 contacts_url = "https://api.tidyhq.com/v1/contacts"
@@ -14,18 +15,18 @@ membership_url = "https://api.tidyhq.com/v1/membership_levels/{}/memberships"
 membership_full_url = "https://api.tidyhq.com/v1//memberships"
 contact_membership_url = "https://api.tidyhq.com/v1/contacts/{}/memberships"
 
-def get_contact(id):
+def get_contact(id: str) -> dict:
     r = requests.get(contacts_url+"/"+str(id),params={"access_token":token})
     member = r.json()
     return member
 
-def get_groups(contact):
+def get_groups(contact: dict) -> list:
     g = []
     for group in contact["groups"]:
         g.append(group["id"])
     return g
 
-def get_memberships(id,raw=False):
+def get_memberships(id: Union[str, int], raw: bool = False) -> list[dict]:
     r = requests.get(contact_membership_url.format(id),params={"access_token":token})
     memberships = r.json()
     if raw == True:
@@ -35,7 +36,7 @@ def get_memberships(id,raw=False):
         m.append(membership["membership_level_id"])
     return m
 
-def time_since_membership(memberships):
+def time_since_membership(memberships: list[dict]) -> int:
     newest = 60000
     for membership in memberships:
         try:
@@ -50,7 +51,7 @@ def time_since_membership(memberships):
             newest = int(since)
     return newest
 
-def format_tidyhq(message=None):
+def format_tidyhq(message: Optional[str] = None) -> str:
     logging.info("Getting TidyHQ data")
     if config["bot"]["dev"]:
         logging.info("Data not grabbed in development mode")
