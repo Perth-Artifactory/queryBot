@@ -8,6 +8,13 @@ This bot exposes `gpt-3.5-turbo` as a Slack service. It is preprimed to assist w
 * Slack channel metadata and recent public messages
 * TidyHQ contact info
 
+## Demo
+
+On the Artifactory Slack team:
+
+* [@queryBot]() - Running the latest [release](https://github.com/Perth-Artifactory/queryBot/releases).
+* [@queryBot-dev]() - Running `main`
+
 ## Installation
 
 ### Server
@@ -66,7 +73,7 @@ Please only use the bot for Artifactory tasks, while it is relatively cheap to r
 * If something is wrong about the message, like the tone etc, ask the bot to change it.
 * If you find that you're adding the same instruction frequently (like "We refer to ourselves as The Artifactory rather than Perth Artifactory Inc") let @Fletcher know and we may be able to include it in the priming.
 
-### In the unrestricted channel
+### In unrestricted channels
 
 Send a message to this channel that tags @queryBot to begin a conversation. Your message should include your complete initial request. If you need to send follow up messages in the same conversation, like correcting details, then reply in a thread and tag @queryBot in the message. Any messages in the thread that do not tag @queryBot will be ignored. This allows us to discuss a response without @queryBot getting confused.
 
