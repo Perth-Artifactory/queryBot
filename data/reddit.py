@@ -1,7 +1,6 @@
 import json
+
 import praw
-from pprint import pprint
-import sys
 
 with open("config.json","r") as f:
     config = json.load(f)

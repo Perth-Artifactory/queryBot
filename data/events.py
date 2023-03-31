@@ -1,7 +1,7 @@
-from datetime import datetime
-import os.path
 import json
 import logging
+import os.path
+from datetime import datetime
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build

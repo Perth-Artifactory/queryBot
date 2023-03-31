@@ -1,11 +1,11 @@
-import requests
-import json
-import html
-import re
-from pprint import pprint
 import hashlib
-import openai
+import html
+import json
 import logging
+import re
+
+import openai
+import requests
 
 from data import reddit
 

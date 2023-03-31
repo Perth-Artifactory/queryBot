@@ -1,8 +1,9 @@
-import requests
 import json
-from pprint import pprint
-from datetime import datetime
 import logging
+from datetime import datetime
+from pprint import pprint
+
+import requests
 
 with open("config.json","r") as f:
     config = json.load(f)

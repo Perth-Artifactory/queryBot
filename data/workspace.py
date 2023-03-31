@@ -1,10 +1,10 @@
 import json
-from slack_bolt import App
-import slack_sdk
-from pprint import pprint
 import logging
-from datetime import datetime
 import re
+from datetime import datetime
+
+import slack_sdk
+from slack_bolt import App
 
 with open("config.json","r") as f:
     config = json.load(f)

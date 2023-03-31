@@ -1,9 +1,8 @@
+import json
+import logging
+
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
-from pprint import pprint
-import json
-
-import logging
 from slack_logger import SlackFormatter, SlackHandler
 
 with open("config.json","r") as f:
@@ -27,6 +26,7 @@ if config["bot"]["dev"]:
 
 # This is going to prefetch some stuff so set up logging first
 import gpt
+
 
 def structure_reply(bot_id,messages,ignore_mention=False):
     conversation = []

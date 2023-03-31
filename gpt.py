@@ -1,9 +1,10 @@
-import openai
 import json
-from pprint import pformat
-import re
 import logging
+import re
 from datetime import datetime
+from pprint import pformat
+
+import openai
 
 from data import events
 
@@ -19,6 +20,7 @@ optional = {}
 # This doesn't require any special permissions so isn't optional
 logging.info("Prefetching internet pages")
 from data import matryoshka
+
 with open("babushka.json","r") as f:
     webpages = json.load(f)
     pages = matryoshka.format_pages(webpages)
@@ -39,6 +41,7 @@ if config.get("tidyhq_token"):
 # This doesn't require any special permissions beyond slack scopes so isn't optional
 
 from data import workspace
+
 logging.info("Prefetching Slack channel info")
 optional["slackpopular"] = workspace.format_channels
 optional["slackmsg"] = workspace.find_channels
