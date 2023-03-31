@@ -19,7 +19,9 @@ On the Artifactory Slack team:
 
 ### Server
 
-`pip install -r requirements.txt`
+* Have at least Python 3.9
+* Set up a virtual environment if you want
+* `pip install -r requirements.txt`
 
 ### OpenAI
 
