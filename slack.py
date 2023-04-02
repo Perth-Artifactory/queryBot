@@ -1,5 +1,6 @@
 import json
 import logging
+from pprint import pprint
 
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -130,20 +131,28 @@ def tagged(event):
 def emoji_prompt(event, say, body):
     message_ts = event["item"]["ts"]
     id = body["authorizations"][0]["user_id"]
+    channel = event["item"].get("channel")
     r = say(":spinthinking:",thread_ts=message_ts)
     stalling_id = r.data["message"]["ts"]
     result = app.client.conversations_replies(
-        channel=event["item"].get("channel"),
+        channel=channel,
         inclusive=True,
         ts=message_ts)
-    messages = clean_messages(result.data["messages"])
+    message = result.data["messages"][-2]
+    
+    if channel in config["channel_maps"]:
+        message["text"] = f'{message["text"]} {config["channel_maps"][channel]}'
+
+    messages = clean_messages([message])
     app.client.chat_postMessage(
         channel=config["unrestricted_channels"][0],
-        text=f'Got authed emoji trigger in <#{event["item"]["channel"]}> from <@{event["user"]}>.\n {messages[-2]["text"]}'
+        text=f'Got authed emoji trigger in <#{channel}> from <@{event["user"]}>.\n {messages[-1]["text"]}'
     )
-    logging.info(f'Got authed :chat-gpt: in {event["item"]["channel"]}')
+    logging.info(f'Got authed :chat-gpt: in {channel}')
+
+
+
     struct = structure_reply(bot_id=id,messages=messages,ignore_mention=True)
-    struct[-1]["content"] += " !calendar !slack"
     gpt_response = gpt.respond(prompts=struct)
     caveat = "\n(This response was automatically generated)"
     app.client.chat_update(
