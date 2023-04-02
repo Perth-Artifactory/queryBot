@@ -70,7 +70,7 @@ def gpt_summarise(pagedata: dict) -> dict:
     logging.info(f'initiating summary of {pagedata["title"]}')
     try:
         r = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=config["models"]["page_summary"],
             messages=[
                 {"role": "system", "content": f'You are a helpful worker being run by {config["bot"]["org_name"]}. You are tasked with summarising the content of web pages in a format that can be used by other iterations of GPT.'},
                 {"role": "user", "content": f'This is the contents of the webpage "{pagedata["title"]}"\n{pagedata["content"]}'}

@@ -68,6 +68,10 @@ Create an account and generate an API token. Place in `./key`
        * `stalling` - Acknowledge that a message is being processed
     * `aliases` - A mapping of aliases to expanded command sets. The alias does not include a `!` but the command sets do.
     * `channel_maps` - A mapping of channels to commands. When a response is triggered via emoji in a listed channel the mapped command will be apended.
+  * `models` - The model used for:
+    * `unrestricted` - Tagged responses in `unrestricted_channels`
+    * `emoji` - Reaction triggered responses
+    * `page_summary` - Pages summaried in `urls`. Summaries are cached and are only rerun if the webpage content changes. (Prime usecase for more expensive model)
 * Run `auth_google.py` to authenticate with google for upcoming events
 * `./rsc/prompts.txt.example` -> `prompts.txt`
   * Add lines that should always be added to the bot. The first line is the system prompt and tells the bot what it is and what it's broadly expected to do. OpenAI has a [decent page](https://platform.openai.com/docs/guides/chat/instructing-chat-models) on system prompts.

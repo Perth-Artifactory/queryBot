@@ -116,7 +116,7 @@ def tagged(body, event, say):
         struct = structure_reply(bot_id=id,messages=command_alias(result.data["messages"][:-1]))
 
     # Replace message with ChatGPT response
-    gpt_response = gpt.respond(prompts=struct)
+    gpt_response = gpt.respond(prompts=struct,model=config["models"]["unrestricted"])
     app.client.chat_update(
         channel=event.get("channel"),
         ts=stalling_id, 
@@ -152,7 +152,7 @@ def emoji_prompt(event, say, body):
     logging.info(f'Got authed :{config["bot"]["emoji"]["trigger"]}: in {channel}')
 
     struct = structure_reply(bot_id=id,messages=messages,ignore_mention=True)
-    gpt_response = gpt.respond(prompts=struct)
+    gpt_response = gpt.respond(prompts=struct,model=config["models"]["emoji"])
     caveat = "\n(This response was automatically generated)"
     app.client.chat_update(
         channel=event["item"].get("channel"),

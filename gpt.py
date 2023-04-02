@@ -52,8 +52,8 @@ optional["slackmsg"] = workspace.find_channels
 if config.get("calendar_id"):
     optional["calendar"] = events.format_events
 
-def respond(prompts: dict) -> str:
-    """Accepts a list of prompts and returns a response from GPT-3
+def respond(prompts: dict, model: str = "gpt-3.5-turbo") -> str:
+    """Accepts a list of prompts and returns a response from a specified GPT model
     Prompts are filtered for commands which are then executed and the results added before the accepted prompts."""
     # Insert optionals
     extras = []
@@ -113,7 +113,7 @@ def respond(prompts: dict) -> str:
     logging.debug(pformat(messages))
     try:
         r = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=model,
             messages=messages)
 
     except openai.error.InvalidRequestError as e:
