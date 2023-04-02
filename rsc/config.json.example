@@ -14,7 +14,8 @@
         "restricted_commands":["tidyhq"],
         "emoji":{"approve":"+1",
                  "remove":"-1",
-                 "trigger":"chat-gpt"}},
+                 "trigger":"chat-gpt"},
+                 "stalling":"thinking_face"}},
  "aliases":{"alias_name":"!url-https://www.youtube.com/watch?v=1wnE4vF9CQ4",
             "alias2":"!command1 !command2 !command3"},
  "channel_maps":{"CXXX":"!command"}}

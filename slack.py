@@ -103,7 +103,7 @@ def tagged(body, event, say):
     ts = event.get("ts")
     message = event.get("text").replace(f'<@{id}>',config["bot"]["name"])
     # send a stalling message to let users know we've received the request
-    r = say(":spinthinking:",thread_ts=ts)
+    r = say(f':{config["bot"]["emoji"]["stalling"]}:',thread_ts=ts)
     stalling_id = r.data["message"]["ts"]
 
     # Retrieve extra context for messages if present
@@ -133,7 +133,7 @@ def emoji_prompt(event, say, body):
     message_ts = event["item"]["ts"]
     id = body["authorizations"][0]["user_id"]
     channel = event["item"].get("channel")
-    r = say(":spinthinking:",thread_ts=message_ts)
+    r = say(f':{config["bot"]["emoji"]["stalling"]}:',thread_ts=message_ts)
     stalling_id = r.data["message"]["ts"]
     result = app.client.conversations_replies(
         channel=channel,
