@@ -60,6 +60,7 @@ Create an account and generate an API token. Place in `./key`
      * `name` - The name of the bot in Slack
      * `org_name` - Your organisation name (used in various prompts etc)
      * `restricted_commands` - Commands that should only be triggered by @bot tags. (and thus only in `unrestricted_channels`)
+    * aliases - A mapping of aliases to expanded command sets. The alias does not include a `!` but the command sets do.
 * Run `auth_google.py` to authenticate with google for upcoming events
 * `./rsc/prompts.txt.example` -> `prompts.txt`
   * Add lines that should always be added to the bot. The first line is the system prompt and tells the bot what it is and what it's broadly expected to do. OpenAI has a [decent page](https://platform.openai.com/docs/guides/chat/instructing-chat-models) on system prompts.

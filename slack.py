@@ -49,11 +49,30 @@ def structure_reply(bot_id: str,messages: list,ignore_mention: bool = False) -> 
 def clean_messages(messages: list[dict]) -> list[dict]:
     """Takes a list of Slack messages and removes any restricted commands from them."""
     clean = []
+    # Process command aliases first so that we can remove any restricted commands in the alias
+    messages = command_alias(messages)
+    # Remove restricted commands
     for message in messages:
         for command in config["bot"]["restricted_commands"]:
             message["text"] = message["text"].replace(f'!{command}',"")
         clean.append(message)
     return clean
+
+def command_alias(messages):
+    """Takes a list of Slack messages and replaces any aliases with the command they're aliased to."""
+    if type(messages) != list:
+        for alias in config["aliases"]:
+            messages = messages.replace(f'!{alias}',f'{config["aliases"][alias]}')
+        return messages
+    used = []
+    for message in messages:
+        for alias in config["aliases"]:
+            if alias not in used:
+                used.append(alias)
+                message["text"] = message["text"].replace(f'!{alias}',f'{config["aliases"][alias]}')
+            else:
+                message["text"] = message["text"].replace(f'!{alias}',"")
+    return messages
 
 # matchers
 
@@ -86,13 +105,13 @@ def tagged(body, event, say):
     stalling_id = r.data["message"]["ts"]
 
     # Retrieve extra context for messages if present
-    struct = [{"role": "user", "content": message}]
+    struct = [{"role": "user", "content": command_alias(message)}]
     if event.get("thread_ts"):
         result = app.client.conversations_replies(
             channel=event.get("channel"),
             inclusive=True,
             ts=event.get("thread_ts"))
-        struct = structure_reply(bot_id=id,messages=result.data["messages"])
+        struct = structure_reply(bot_id=id,messages=command_alias(result.data["messages"][:-1]))
 
     # Replace message with ChatGPT response
     gpt_response = gpt.respond(prompts=struct)
