@@ -78,10 +78,11 @@ def command_alias(messages):
 # matchers
 
 def gpt_emoji(event: dict) -> bool:
-    return event.get("reaction") == "chat-gpt"
+    return event.get("reaction") == config["bot"]["emoji"]["trigger"]
 
 def approval_emoji(event: dict) -> bool:
-    return event.get("reaction") in ["+1","-1"]
+    return event.get("reaction") in [config["bot"]["emoji"]["approve"],
+                                     config["bot"]["emoji"]["remove"]]
 
 def authed(event: dict) -> bool:
     """Checks if the user is in a unrestricted channel"""
@@ -139,7 +140,7 @@ def emoji_prompt(event, say, body):
         inclusive=True,
         ts=message_ts)
     message = result.data["messages"][-2]
-    
+
     if channel in config["channel_maps"]:
         message["text"] = f'{message["text"]} {config["channel_maps"][channel]}'
 
@@ -148,9 +149,7 @@ def emoji_prompt(event, say, body):
         channel=config["unrestricted_channels"][0],
         text=f'Got authed emoji trigger in <#{channel}> from <@{event["user"]}>.\n {messages[-1]["text"]}'
     )
-    logging.info(f'Got authed :chat-gpt: in {channel}')
-
-
+    logging.info(f'Got authed :{config["bot"]["emoji"]["trigger"]}: in {channel}')
 
     struct = structure_reply(bot_id=id,messages=messages,ignore_mention=True)
     gpt_response = gpt.respond(prompts=struct)
@@ -164,12 +163,12 @@ def emoji_prompt(event, say, body):
     app.client.reactions_add(
         channel=event["item"].get("channel"),
         timestamp=stalling_id,
-        name="+1"
+        name=config["bot"]["emoji"]["approve"]
     )
     app.client.reactions_add(
         channel=event["item"].get("channel"),
         timestamp=stalling_id,
-        name="-1"
+        name=config["bot"]["emoji"]["remove"]
     )
 
 @app.event(event="reaction_added", matchers=[approval_emoji, authed])
@@ -179,32 +178,32 @@ def killswitch(event, body, logger):
     id = body["authorizations"][0]["user_id"]
     # Only react if the message being reacted to is us and don't react if we're the one reacting
     if event.get("user") != id and event.get("item_user") == id:
-        if event.get("reaction") == "-1":
+        if event.get("reaction") == config["bot"]["emoji"]["remove"]:
             app.client.chat_update(
                 channel=event["item"].get("channel"),
                 ts=event["item"].get("ts"),
                 as_user=True,
                 text = f'I\'m sorry, the response I generated for this query was marked as innacurate by <@{event.get("user")}>'
             )
-        elif event.get("reaction") == "+1":
+        elif event.get("reaction") == config["bot"]["emoji"]["approve"]:
             pass
         app.client.reactions_remove(
             channel=event["item"].get("channel"),
             timestamp=event["item"].get("ts"),
-            name="+1"
+            name=config["bot"]["emoji"]["approve"]
         )
         app.client.reactions_remove(
             channel=event["item"].get("channel"),
             timestamp=event["item"].get("ts"),
-            name="-1"
+            name=config["bot"]["emoji"]["remove"]
         )
 
 @app.event("reaction_added")
-def handle_reaction_added_events(body, logger):
-    logger.info(body)
+def handle_reaction_added_events():
+    pass
 
 @app.event("message")
-def handle_message_events(body, logger):
+def handle_message_events():
     pass
 
 if __name__ == "__main__":
