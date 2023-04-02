@@ -13,7 +13,7 @@ This bot exposes `gpt-3.5-turbo` as a Slack service. It is preprimed to assist w
 
 On the Artifactory Slack team:
 
-* [@queryBot]() - Running the latest [release](https://github.com/Perth-Artifactory/queryBot/releases).
+* [@queryBot]() - Running the latest [release](https://github.com/Perth-Artifactory/queryBot/releases)
 * [@queryBot-dev]() - Running `main`
 
 ## Installation
@@ -105,11 +105,13 @@ Add the following to a message and the bot should get some info about that categ
 
 ### Elsewhere on Slack
 
-If @queryBot is in the channel (`/invite @querybot`) you can react to a users message with `:chat-gpt:` and the bot will respond to their message. You won't be able to do follow up messages etc. However, if the message you're reacting to has one of the !commands used in the unrestricted channel then these will be executed. Please be mindful of this (especially when using `!url`)
+If @queryBot is in the channel (`/invite @querybot`) you can react to a users message with `:chat-gpt:` and the bot will respond to their message. You won't be able to do follow up messages etc. However, if the message you're reacting to has one of the !commands used in the unrestricted channel then these will be executed. Please be mindful of this (especially when using `!url`). Restricted commands (`!tidyhq`) will never be run outside on an unrestricted channel.
 
 The bot will react with :+1: and :-1: to every message it sends using this method. This makes the feature below easier to use.
 
 Sometimes the bot gets an answer wrong and you may not have permissions on Slack to delete an incorrect message. If you react with a :-1: the bot will replace it's answer with a removal message. If you react with a :+1: it will remove it's own approval emoji from the message to reduce the likelyhood that other users will misclick.
+
+When triggered in specifically configured channels certain extra commands will be added to the message. (Such as `!lasers` in lasers)
 
 ## Understanding conversation order
 
