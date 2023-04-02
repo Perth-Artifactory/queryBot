@@ -23,10 +23,16 @@ On the Artifactory Slack team:
 * Have at least Python 3.9
 * Set up a virtual environment if you want
 * `pip install -r requirements.txt`
+  * `openai` - Access to GPT
+  * `slack_bolt` Access to Slack's API
+  * `google-api-python-client`, `google-auth-httplib2`, `google-auth-oauthlib` - Credential negotiation and access to Google's API
+  * `praw` - Access to Reddit's API
+  * `slack_logger` - Send error messages over Slack
+  * `beautifulsoup4`, `youtube_transcript_api` - Processing information regarding YouTube videos
 
 ### OpenAI
 
-Create an account and generate an API token.
+Create an account and generate an API token. Place in `./key`
 
 ### Slack
 
