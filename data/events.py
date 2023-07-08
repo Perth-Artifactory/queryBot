@@ -3,6 +3,7 @@ import logging
 import os.path
 from datetime import datetime
 from typing import Optional
+from pprint import pprint
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -57,7 +58,10 @@ def format_events(message: Optional[dict[list]] = None) -> str:
         s += f'\n{event["summary"]} starts at {start_dt.strftime(start_f)} until {end_dt.strftime(end_f)}'
         # Some events repeat, we only want to add the description once to save tokens
         if event["summary"] not in descriptions:
-            descriptions[event["summary"]] = event["description"]
+            try:
+                descriptions[event["summary"]] = event.get("description", "No event description provided, use event title.")
+            except:
+                pprint(event)
     s += "\nThese are a the descriptions for the events listed above."
     for description in descriptions:
         s += "\n" + description
