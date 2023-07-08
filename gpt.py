@@ -3,6 +3,7 @@ import logging
 import re
 from datetime import datetime
 from pprint import pformat
+from typing import Optional
 
 import openai
 
@@ -33,7 +34,7 @@ if config.get("tidyhq_token"):
     from data import tidyhq
     logging.info("Prefetching TidyHQ data")
     tidy_data = tidyhq.format_tidyhq()
-    def tidy() -> str:
+    def tidy(message: Optional[dict[list]] = None) -> str:
         return tidy_data
     optional["tidyhq"] = tidy
 
