@@ -26,7 +26,10 @@ def download_page(pagedata: dict) -> dict:
 
 def mrkdwn(pagedata: dict) -> dict:
     """Accepts a dict containing a url, download_url and content and returns the same dict with the title of the page added if it's set via 'title: '"""
-    pagedata["title"] = re.findall("\ntitle: '*?(.*)'*?", pagedata["content"])[0].replace("'","")
+    try:
+        pagedata["title"] = re.findall("\ntitle: '*?(.*)'*?", pagedata["content"])[0].replace("'","")
+    except IndexError:
+        pass
     return pagedata
 
 def process_page(url: str) -> dict:
